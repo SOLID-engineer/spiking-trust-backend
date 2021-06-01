@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\SearchController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => ['json.response']], function () {
+Route::group(['prefix' => 'v1', 'middleware' => ['json.response']], function () {
 
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         return $request->user();
@@ -23,6 +23,12 @@ Route::group(['middleware' => ['json.response']], function () {
     Route::get('/token', function () {
         $user = \App\Models\User::first();
         return ['accessToken' => $user->createToken('accessToken')->accessToken];
+    });
+
+    Route::group(['prefix' => 'search'], function () {
+        Route::get('/', [SearchController::class, 'index']);
+        Route::get('/suggestion', [SearchController::class, 'suggestion']);
+        Route::post('/create-domain', [SearchController::class, 'createDomain']);
     });
 
 });
