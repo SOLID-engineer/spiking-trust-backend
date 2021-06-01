@@ -17,8 +17,7 @@ class CreateCompaniesTable extends Migration
             $table->id();
             $table->string('domain')->unique();
             $table->string('name')->nullable();
-            $table->foreignId('submitted_by')->constrained('users');
-            $table->string('description', 255);
+            $table->string('description', 255)->nullable();
             $table->timestamps();
         });
     }
