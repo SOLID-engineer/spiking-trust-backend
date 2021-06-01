@@ -67,6 +67,7 @@ class SearchController extends Controller
         }
 
         $domain = $request->get('domain', '');
+        $domain = preg_replace ("~^www\.~", "", $domain);
         $company = Company::where("domain", "$domain")
                             ->first();
 
