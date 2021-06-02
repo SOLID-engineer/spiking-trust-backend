@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\PaginateFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
@@ -42,6 +44,11 @@ class ReviewController extends Controller
         $review->offsetUnset('id');
 
         return response()->json($review, 200);
+    }
+
+    public function recent (Request $request) {
+        $reviews =  Review::orderBy('created_at', 'desc')->limit(10)->get();
+        return response()->json($reviews, 200);
     }
 
 }

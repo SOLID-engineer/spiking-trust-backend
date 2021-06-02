@@ -41,6 +41,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::post('/{domain}', [ReviewController::class, 'store']);
     });
 
+    Route::group(['prefix' => '/reviews'], function () {
+        Route::get('/recent', [ReviewController::class, 'recent']);
+    });
+
 
 
 
