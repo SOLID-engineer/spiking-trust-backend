@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\PaginateFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class CompanyController extends Controller
 {

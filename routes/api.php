@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\ReviewController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,7 +22,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         return $request->user();
     });
 
-    Route::get('/token', function () {
+    Route::post('/token', function () {
         $user = \App\Models\User::first();
         return ['accessToken' => $user->createToken('accessToken')->accessToken];
     });
@@ -32,9 +33,16 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::post('/create-domain', [SearchController::class, 'createDomain']);
     });
 
-    Route::group(['prefix' => '/company'], function () {
+    Route::group(['prefix' => '/companies'], function () {
         Route::get('/{domain}', [CompanyController::class, 'index']);
     });
+
+    Route::group(['prefix' => '/evaluates'], function () {
+        Route::post('/{domain}', [ReviewController::class, 'store']);
+    });
+
+
+
 
 
 });

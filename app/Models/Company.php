@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,9 +30,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuids;
 
     protected $table = 'companies';
 
-
+    public function reviews () {
+        return $this->hasMany(Review::class, 'company_id', 'id');
+    }
 }

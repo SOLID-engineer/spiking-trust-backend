@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Elibs\eView;
 use App\Helpers\PaginateFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
@@ -41,10 +40,9 @@ class SearchController extends Controller
     {
         $results = [];
         $query = $request->get('query', '');
-
         if (!empty($query)) {
             $results['companies'] = Company::where("domain", "like", "%$query%")
-                                ->limit(5);
+                                ->limit(5)->get();
             $results['categories'] = [];
         }
 
@@ -76,7 +74,6 @@ class SearchController extends Controller
         }
         if ( gethostbyname($domain) != $domain ) {
             $company = new Company();
-            $company->domain = $domain;
             $company->domain = $domain;
             $company->name = null;
             $company->save();
