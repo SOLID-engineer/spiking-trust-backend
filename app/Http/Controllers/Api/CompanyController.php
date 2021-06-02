@@ -18,8 +18,8 @@ class CompanyController extends Controller
     {
         $domain = preg_replace ("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)->first();
-        $company->average = $company->reviews()->avg('rating');
-        $company->count = $company->reviews()->count();
+        $company->average_rating = $company->reviews()->avg('rating') ?? 0;
+        $company->reviews_count = $company->reviews()->count();
         return response()->json($company, 200);
     }
 }
