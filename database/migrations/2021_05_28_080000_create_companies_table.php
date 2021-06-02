@@ -15,7 +15,7 @@ class CreateCompaniesTable extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
+//            $table->uuid('uuid');
             $table->string('domain')->unique();
             $table->string('name')->nullable();
             $table->string('description', 255)->nullable();
