@@ -37,7 +37,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::get('/{domain}', [CompanyController::class, 'index']);
     });
 
-    Route::group(['prefix' => '/evaluates'], function () {
+    Route::group(['prefix' => '/evaluate'], function () {
         Route::post('/{domain}', [ReviewController::class, 'store']);
     });
 

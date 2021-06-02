@@ -22,7 +22,7 @@ class CompanyFactory extends Factory
     public function definition()
     {
         return [
-            'domain' => $this->faker->unique()->regexify($this->faker->word.'\.(com|vn|com.vn|fn|fr|jp|vip)'),
+            'domain' => $this->faker->unique()->regexify($this->faker->word.'\.(com|vn|com\.vn|fn|fr|jp|vip)'),
             'name' => $this->faker->firstName(),
             'description' => $this->faker->text(200),
         ];
