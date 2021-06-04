@@ -23,8 +23,10 @@ class SearchController extends Controller
         $query = $request->get('query', '');
 
         if (!empty($query)) {
-            $companies = Company::where("domain", "like", "%$query%")
-                ->paginate(10);
+            $companies = Company::withCount('reviews')
+                                ->withAvg('reviews', 'rating')
+                                ->where("domain", "like", "%$query%")
+                                ->paginate(10);
             /** @var LengthAwarePaginator $companies */
             $results = PaginateFormatter::format($companies);
         }

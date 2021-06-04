@@ -37,4 +37,8 @@ class Company extends Model
     public function reviews () {
         return $this->hasMany(Review::class, 'company_id', 'id');
     }
+
+    public function countReviews () {
+        return $this->hasMany(Review::class, 'company_id', 'id');
+    }
 }
