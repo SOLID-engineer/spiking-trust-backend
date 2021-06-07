@@ -38,8 +38,13 @@ class Review extends Model
 
     protected $table = "reviews";
 
-    public function company () {
+    public function company()
+    {
         return $this->hasOne(Company::class, 'id', 'company_id');
     }
 
+    public function author()
+    {
+        return $this->hasOne(User::class, 'id', 'author_id');
+    }
 }
