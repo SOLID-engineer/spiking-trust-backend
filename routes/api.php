@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\Admin\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,6 +18,11 @@ use App\Http\Controllers\Api\ReviewController;
 */
 
 Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function () {
+
+    Route::group(['prefix' => '/admin', 'middleware' => ['json.response', 'auth:api']], function () {
+        Route::resource('caetgories', CategoryController::class);
+    });
+
 
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         return $request->user();
