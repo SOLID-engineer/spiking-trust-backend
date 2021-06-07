@@ -41,6 +41,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
 
     Route::group(['prefix' => '/companies'], function () {
         Route::get('/{domain}', [CompanyController::class, 'index']);
+        Route::post('/claim', [CompanyController::class, 'claim']);
     });
 
     Route::group(['prefix' => '/evaluate'], function () {

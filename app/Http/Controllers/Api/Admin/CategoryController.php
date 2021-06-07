@@ -40,7 +40,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validate = $this->_validate($request->all());
-        if (!$validate) {
+        if ($validate->fails()) {
             return response()->json($validate->errors(), 400);
         }
         $user = $request->user();
@@ -75,7 +75,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $validate = $this->_validate($request->all());
-        if (!$validate) {
+        if ($validate->fails()) {
             return response()->json($validate->errors(), 400);
         }
         $category = Category::find($id);
