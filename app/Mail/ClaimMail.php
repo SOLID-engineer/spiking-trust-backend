@@ -30,6 +30,9 @@ class ClaimMail extends Mailable
      */
     public function build()
     {
-        return $this->view('mail.claim-mail')->with($this->data);
+        return $this->view('mails.claim-mail')->with([
+            'user_id' => $this->data->user_id,
+            'company_id' => $this->data->company_id,
+        ]);
     }
 }

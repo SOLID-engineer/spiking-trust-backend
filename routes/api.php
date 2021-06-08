@@ -20,7 +20,7 @@ use App\Http\Controllers\Api\Admin\CategoryController;
 
 Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function () {
 
-    Route::group(['prefix' => '/admin', 'middleware' => ['json.response', 'auth:api']], function () {
+    Route::group(['prefix' => '/admin', 'middleware' => ['auth:api']], function () {
         Route::resource('caetgories', CategoryController::class);
     });
 
@@ -43,9 +43,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
     });
 
     Route::group(['prefix' => '/companies'], function () {
+        Route::post('/claim', [CompanyController::class, 'claim'])->middleware('auth:api');
+        Route::post('/accept-company', [CompanyController::class, 'accept'])->middleware('auth:api');
+        Route::get('/claim', [CompanyController::class, 'domainClaim'])->middleware('auth:api');
         Route::get('/{domain}', [CompanyController::class, 'index']);
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
-        Route::post('/claim', [CompanyController::class, 'claim']);
     });
 
     Route::group(['prefix' => '/evaluate'], function () {
