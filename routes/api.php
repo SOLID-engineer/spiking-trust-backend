@@ -58,7 +58,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::get('/recent', [ReviewController::class, 'recent']);
     });
 
-
+    Route::group(['prefix' => '/categories'], function () {
+        Route::get('/', [\App\Http\Controllers\Api\CategoryController::class, 'index']);
+    });
 
 
 
