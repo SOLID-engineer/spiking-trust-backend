@@ -12,6 +12,7 @@ use App\Rules\ValidDomain;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -85,7 +86,6 @@ class CompanyController extends Controller
             $company->domain = $domain;
             $company->name = null;
             $company->save();
-            return response()->json($company, 200);
         }
 
         if ($company->claimed_at) {
@@ -109,6 +109,11 @@ class CompanyController extends Controller
         return response()->json($company, 200);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Throwable
+     */
     public function accept(Request $request)
     {
         $user = $request->user();
@@ -121,7 +126,20 @@ class CompanyController extends Controller
         if ($claimToken->user_id != $user->id) return response()->json([], 401);
         if ($token !== $claimToken->token) return response()->json([], 400);
 
-        return response()->json([], 200);
+        DB::beginTransaction();
+        try {
+            $company = Company::find($company_id);
+            $company->claimed_at = Carbon::now();
+            $company->save();
+            $company->owner()->attach($claimToken->user_id);
+            DB::commit();
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([], 500);
+        }
+
+
     }
 
     public function domainClaim(Request $request)

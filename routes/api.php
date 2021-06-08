@@ -24,6 +24,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::resource('caetgories', CategoryController::class);
     });
 
+    Route::post('/token', function () {
+        $user = \App\Models\User::first();
+        return ['accessToken' => $user->createToken('accessToken')->accessToken];
+    });
 
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         return $request->user();

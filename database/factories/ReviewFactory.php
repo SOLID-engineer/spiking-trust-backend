@@ -27,7 +27,7 @@ class ReviewFactory extends Factory
             'rating' => $this->faker->numberBetween(1,5),
             'company_id' => Company::all()->random(1)->first()->id,
             'author_id' => User::all()->random(1)->first()->id,
-            'title' => $this->faker->title(),
+            'title' => $this->faker->text(100),
             'content' => $this->faker->paragraph(),
             'ip_address' => mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255),
         ];
