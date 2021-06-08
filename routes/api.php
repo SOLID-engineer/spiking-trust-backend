@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ReviewController;
+
+use App\Http\Controllers\Api\Admin\CategoryController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,7 +48,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::get('/recent', [ReviewController::class, 'recent']);
     });
 
-
+    Route::group(['prefix' => '/categories'], function () {
+        Route::get('/', [\App\Http\Controllers\Api\CategoryController::class, 'index']);
+    });
 
 
 
