@@ -21,7 +21,7 @@ class ReviewController extends Controller
     {
         $rules = [
             'rating' => ['required', 'numeric'],
-            'content' => ['required', 'max:500'],
+            'content' => ['required'],
             'title' => ['required', 'max:255'],
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -36,7 +36,9 @@ class ReviewController extends Controller
         $review->rating = $params['rating'];
         $review->content = $params['content'];
         $review->title = $params['title'];
-        $review->author_id = 1;
+        $review->author_id = $request->user()->id;
+
+
         $review->company_id = $company->id;
         $review->ip_address = $request->ip();
         $review->save();
@@ -46,8 +48,12 @@ class ReviewController extends Controller
         return response()->json($review, 200);
     }
 
-    public function recent (Request $request) {
-        $reviews =  Review::orderBy('created_at', 'desc')->limit(10)->get();
+    public function recent(Request $request)
+    {
+        $reviews = Review::with([
+            'author:id,first_name,last_name',
+            'company:id,domain,name'
+        ])->orderBy('created_at', 'desc')->limit(12)->get();
         return response()->json($reviews, 200);
     }
 

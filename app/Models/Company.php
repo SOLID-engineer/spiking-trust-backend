@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Company whereSubmittedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Company whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Review[] $reviews
+ * @property-read int|null $reviews_count
+ * @method static \Database\Factories\CompanyFactory factory(...$parameters)
  */
 class Company extends Model
 {
@@ -34,8 +37,13 @@ class Company extends Model
 
     protected $table = 'companies';
 
-    public function reviews () {
+    public function reviews()
+    {
         return $this->hasMany(Review::class, 'company_id', 'id');
+    }
+
+    public function claimToken () {
+        return $this->hasOne(ClaimToken::class, 'company_id', 'id');
     }
 
     public function countReviews () {
