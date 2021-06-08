@@ -42,6 +42,10 @@ class Company extends Model
         return $this->hasMany(Review::class, 'company_id', 'id');
     }
 
+    public function claimToken () {
+        return $this->hasOne(ClaimToken::class, 'company_id', 'id');
+    }
+
     public function countReviews () {
         return $this->hasMany(Review::class, 'company_id', 'id');
     }

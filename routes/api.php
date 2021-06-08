@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\Admin\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,11 @@ use App\Http\Controllers\Api\ReviewController;
 */
 
 Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function () {
+
+    Route::group(['prefix' => '/admin', 'middleware' => ['auth:api']], function () {
+        Route::resource('caetgories', CategoryController::class);
+    });
+
 
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         return $request->user();
@@ -37,12 +43,23 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
     });
 
     Route::group(['prefix' => '/companies'], function () {
+        Route::post('/claim', [CompanyController::class, 'claim'])->middleware('auth:api');
+        Route::post('/accept-company', [CompanyController::class, 'accept'])->middleware('auth:api');
+        Route::get('/claim', [CompanyController::class, 'domainClaim'])->middleware('auth:api');
         Route::get('/{domain}', [CompanyController::class, 'index']);
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
+    });
+
+    Route::group(['prefix' => '/evaluate'], function () {
+        Route::post('/{domain}', [ReviewController::class, 'store']);
     });
 
     Route::group(['prefix' => '/reviews'], function () {
         Route::get('/recent', [ReviewController::class, 'recent']);
     });
+
+
+
+
 
 });
