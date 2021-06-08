@@ -13,3 +13,5 @@ npm-debug.log
 yarn-error.log
 .idea
 /certificates
+supervisord.log
+supervisord.pid
