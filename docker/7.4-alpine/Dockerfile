@@ -30,4 +30,6 @@ RUN set -eux; \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
     && chmod +x /usr/local/bin/start-container
 
+RUN composer install
+
 ENTRYPOINT ["start-container"]
