@@ -16,7 +16,8 @@ class CreateClaimTokensTable extends Migration
         Schema::create('claim_tokens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('company_id')->constrained('companies');
+            $table->string('domain');
+            $table->string('email');
             $table->string('token');
             $table->timestamp('expired_at');
             $table->timestamps();
