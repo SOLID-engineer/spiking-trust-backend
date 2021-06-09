@@ -14,9 +14,9 @@ class CreateCompanyOwnerTable extends Migration
     public function up()
     {
         Schema::create('company_owner', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('owner_id')->constrained('users');
+            $table->primary(["company_id", "owner_id"]);
         });
     }
 

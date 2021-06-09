@@ -1,0 +1,1 @@
+web: vendor/bin/spiking-trust public/

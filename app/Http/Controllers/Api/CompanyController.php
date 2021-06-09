@@ -124,6 +124,8 @@ class CompanyController extends Controller
                 $company->owner()->attach($claimToken->user_id);
                 $company->save();
             }
+            $claimToken->expired_at = Carbon::now()->timestamp;
+            $claimToken->save();
             DB::commit();
             return response()->json([], 200);
         } catch (\Exception $e) {
