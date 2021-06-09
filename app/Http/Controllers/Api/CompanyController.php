@@ -58,37 +58,20 @@ class CompanyController extends Controller
     {
 
         $rules = array(
-            'domain' => 'required|between:1,255',
+            'domain' => ['required', 'between:1,255', new ValidDomain()],
             'email' => 'required'
         );
 
         $validate = Validator::make($request->all(), $rules);
-        if ($validate->fails()) return response()->json('', 400);
+        if ($validate->fails()) return response()->json([], 400);
 
         $domain = $request->get('domain');
         $email = $request->get('email');
-
-        $rules = [
-            'domain' => ['required', new ValidDomain()]
-        ];
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)
             ->first();
 
-        if (!$company) {
-            $company = new Company();
-            $company->domain = $domain;
-            $company->name = null;
-            $company->save();
-        }
-
-        if ($company->claimed_at) {
+        if ($company && $company->claimed_at) {
             return response()->json([], 402);
         }
 
@@ -98,12 +81,11 @@ class CompanyController extends Controller
 
         $claimToken = new ClaimToken();
         $claimToken->user_id = $user->id;
-        $claimToken->company_id = $company->id;
+        $claimToken->domain = $domain;
+        $claimToken->email = $mail;
         $claimToken->expired_at = Carbon::now()->addWeeks(1);
         $claimToken->token = $token;
-
         $claimToken->save();
-
         Mail::to("dangtrungkien96@gmail.com")->send(new ClaimMail($claimToken));
 
         return response()->json($company, 200);
@@ -117,48 +99,37 @@ class CompanyController extends Controller
     public function accept(Request $request)
     {
         $user = $request->user();
-
         $token = $request->get('token', '');
-        $company_id = $request->get('company_id', '');
-        $claimToken = ClaimToken::where('company_id', $company_id)
-            ->where('expired_at', '>=', Carbon::now())->orderBy('id', 'desc')->first();
-        if (!$claimToken) return response()->json([], 400);
-        if ($claimToken->user_id != $user->id) return response()->json([], 401);
-        if ($token !== $claimToken->token) return response()->json([], 400);
 
+        $claimToken = ClaimToken::where('token', $token)
+            ->orderBy('id', 'desc')->first();
+
+        if (!$claimToken) return response()->json(['message' => 'Token is not exist'], 400);
+        if (Carbon::parse($claimToken->expired_at)->timestamp < Carbon::now()->timestamp)
+            return response()->json(['message' => 'The token is expired'], 400);
+        if ($claimToken->user_id != $user->id) return response()->json([], 403);
         DB::beginTransaction();
         try {
-            $company = Company::find($company_id);
-            $company->claimed_at = Carbon::now();
-            $company->save();
-            $company->owner()->attach($claimToken->user_id);
+            $company = Company::where("domain", $claimToken->domain)
+                ->first();
+            if (!$company) {
+                $company = new Company();
+                $company->domain = $claimToken->domain;
+                $company->name = null;
+                $company->claimed_at = Carbon::now();
+                $company->save();
+                $company->owner()->attach($claimToken->user_id);
+            } else {
+                $company->claimed_at = Carbon::now();
+                $company->owner()->attach($claimToken->user_id);
+                $company->save();
+            }
             DB::commit();
             return response()->json([], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([], 500);
         }
-
-
     }
 
-    public function domainClaim(Request $request)
-    {
-        $company_id = $request->get('company_id', '');
-
-        $company = Company::where('id', $company_id)
-            ->whereNull('claimed_at')
-            ->with(['claimToken' => function ($query) {
-                return $query->select('expired_at', 'user_id', 'company_id')
-                    ->where('expired_at', '>=', Carbon::now())
-                    ->orderBy('id', 'desc')
-                    ->first();
-            }])
-            ->orderBy('id', 'desc')->first();
-
-        if (empty($company)) return response()->json([], 400);
-        if (empty($company->claimToken)) return response()->json([], 400);
-
-        return response()->json($company, 200);
-    }
 }
