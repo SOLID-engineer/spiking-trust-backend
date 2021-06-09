@@ -1,1 +1,1 @@
-web: vendor/bin/spiking-trust public/
+web: vendor/bin/heroku-php-apache2 public/
