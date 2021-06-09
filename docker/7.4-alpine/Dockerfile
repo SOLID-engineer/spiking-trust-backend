@@ -1,3 +1,8 @@
+FROM composer as builder
+WORKDIR /app/
+COPY composer.* ./
+RUN composer install
+
 FROM php:7.4-cli-alpine3.13
 
 LABEL maintainer="Neo Ighodaro"
@@ -5,8 +10,7 @@ LABEL maintainer="Neo Ighodaro"
 WORKDIR /var/www/html
 COPY . /var/www/html/
 
-COPY composer.json composer.lock ./
-RUN composer install --no-scripts --no-autoloader
+COPY --from=builder /app/vendor /var/www/vendor
 
 ENV TZ=UTC
 ENV DEBIAN_FRONTEND noninteractive
