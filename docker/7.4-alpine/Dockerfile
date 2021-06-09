@@ -8,7 +8,7 @@ ENV TZ=UTC
 ENV DEBIAN_FRONTEND noninteractive
 
 COPY ./docker/7.4-alpine/php.ini /usr/local/etc/php/conf.d/99-sail.ini
-COPY ./docker/7.4-alpine/tart-container /usr/local/bin/start-container
+COPY ./docker/7.4-alpine/start-container /usr/local/bin/start-container
 COPY ./docker/7.4-alpine/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
