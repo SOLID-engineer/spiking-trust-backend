@@ -3,7 +3,7 @@ FROM php:7.4-cli-alpine3.13
 LABEL maintainer="Neo Ighodaro"
 
 WORKDIR /var/www/html
-COPY . .
+COPY . /var/www/html/
 
 ENV TZ=UTC
 ENV DEBIAN_FRONTEND noninteractive
