@@ -5,6 +5,9 @@ LABEL maintainer="Neo Ighodaro"
 WORKDIR /var/www/html
 COPY . /var/www/html/
 
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-autoloader
+
 ENV TZ=UTC
 ENV DEBIAN_FRONTEND noninteractive
 
