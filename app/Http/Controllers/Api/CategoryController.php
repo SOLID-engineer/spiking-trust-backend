@@ -14,10 +14,22 @@ class CategoryController extends Controller
      * @return Response
      */
 
-    public function index(Request $request) {
-
-        $category = Category::where('status', 1)->get();
-
-        return response($category, 200);
+    public function index(Request $request)
+    {
+        $categories = Category::where([['status', 1], ['level', "<=", 2]])
+            ->get();
+        $_categories = [];
+        foreach ($categories as $category) {
+            if ($category['parent_id'] === 0) {
+                $category['children'] = [];
+                foreach ($categories as $children) {
+                    if ($category['id'] === $children['parent_id']) {
+                        $category['children'] = array_merge($category['children'], [$children]);
+                    }
+                }
+                $_categories[] = $category;
+            }
+        }
+        return response($_categories, 200);
     }
 }

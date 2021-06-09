@@ -130,11 +130,14 @@ class CategoryController extends Controller
 
     public function _updateParent($id, $parent_id = 0) {
         $categoryModel  = Category::find($id);
+
         if ($parent_id == 0) {
             $categoryModel->depth = $id;
+            $categoryModel->level = 1;
         } else {
             $categoryParent       = Category::find($parent_id);
             $categoryModel->depth = $categoryParent->depth."/".$id;
+            $categoryModel->level = count(explode('/', $categoryModel->depth));
         }
         $categoryModel->save();
 

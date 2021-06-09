@@ -21,6 +21,7 @@ class CreateCategoriesTable extends Migration
             $table->string('depth')->default('/');
             $table->string('slug');
             $table->smallInteger('position')->nullable();
+            $table->smallInteger('level')->default(1);
             $table->integer('status')->default('1');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
