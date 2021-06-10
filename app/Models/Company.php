@@ -42,11 +42,8 @@ class Company extends Model
         return $this->hasMany(Review::class, 'company_id', 'id');
     }
 
-    public function claimToken () {
-        return $this->hasOne(ClaimToken::class, 'company_id', 'id');
-    }
-
-    public function owner() {
+    public function owners()
+    {
         return $this->belongsToMany(User::class, 'company_owner', 'company_id', 'owner_id');
     }
 }

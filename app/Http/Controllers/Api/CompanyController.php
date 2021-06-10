@@ -42,6 +42,7 @@ class CompanyController extends Controller
     {
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)->first();
+        if (empty($company)) abort(404);
         $reviews = Review::with(['author:id,first_name,last_name'])
             ->where('company_id', $company->id)
             ->orderBy('created_at', 'desc')
@@ -56,7 +57,6 @@ class CompanyController extends Controller
      */
     public function claim(Request $request)
     {
-
         $rules = array(
             'domain' => ['required', 'between:1,255', new ValidDomain()],
             'email' => 'required'
@@ -118,13 +118,13 @@ class CompanyController extends Controller
                 $company->name = null;
                 $company->claimed_at = Carbon::now();
                 $company->save();
-                $company->owner()->attach($claimToken->user_id);
+                $company->owners()->attach($claimToken->user_id);
             } else {
                 $company->claimed_at = Carbon::now();
-                $company->owner()->attach($claimToken->user_id);
+                $company->owners()->attach($claimToken->user_id);
                 $company->save();
             }
-            $claimToken->expired_at = Carbon::now()->timestamp;
+            $claimToken->expired_at = Carbon::now();
             $claimToken->save();
             DB::commit();
             return response()->json([], 200);

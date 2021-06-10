@@ -24,9 +24,9 @@ class SearchController extends Controller
 
         if (!empty($query)) {
             $companies = Company::withCount('reviews')
-                                ->withAvg('reviews', 'rating')
-                                ->where("domain", "like", "%$query%")
-                                ->paginate(10);
+                ->withAvg('reviews', 'rating')
+                ->where("domain", "like", "%$query%")
+                ->paginate(10);
             /** @var LengthAwarePaginator $companies */
             $results = PaginateFormatter::format($companies);
         }
@@ -44,7 +44,7 @@ class SearchController extends Controller
         $query = $request->get('query', '');
         if (!empty($query)) {
             $results['companies'] = Company::where("domain", "like", "%$query%")
-                                ->limit(5)->get();
+                ->limit(5)->get();
             $results['categories'] = [];
         }
 
@@ -56,7 +56,8 @@ class SearchController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function createDomain(Request $request) {
+    public function createDomain(Request $request)
+    {
         $rules = [
             'domain' => ['required', new ValidDomain()]
         ];
@@ -67,14 +68,14 @@ class SearchController extends Controller
         }
 
         $domain = $request->get('domain', '');
-        $domain = preg_replace ("~^www\.~", "", $domain);
+        $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", "$domain")
-                            ->first();
+            ->first();
 
         if (!empty($company)) {
             return response()->json($company, 200);
         }
-        if ( gethostbyname($domain) != $domain ) {
+        if (gethostbyname($domain) != $domain) {
             $company = new Company();
             $company->domain = $domain;
             $company->name = null;

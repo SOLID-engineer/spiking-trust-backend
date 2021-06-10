@@ -29,13 +29,17 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         return ['accessToken' => $user->createToken('accessToken')->accessToken];
     });
 
-    Route::middleware('auth:api')->get('/user', function (Request $request) {
+    Route::get('/user', function (Request $request) {
         return $request->user();
-    });
+    })->middleware('auth:api');
 
     Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/me', [\App\Http\Controllers\Api\UserController::class, 'me']);
         Route::post('/evaluate/{domain}', [ReviewController::class, 'store']);
+        Route::group(['prefix' => '/business', 'middleware' => ['business']], function () {
+            Route::get('/companies', [\App\Http\Controllers\Api\Business\BusinessController::class, 'companies']);
+            Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
+        });
     });
 
     Route::post('/login', [\App\Http\Controllers\Api\UserController::class, 'login']);
@@ -53,9 +57,6 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
     });
 
-    Route::group(['prefix' => '/evaluate'], function () {
-        Route::post('/{domain}', [ReviewController::class, 'store']);
-    });
 
     Route::group(['prefix' => '/reviews'], function () {
         Route::get('/recent', [ReviewController::class, 'recent']);
@@ -64,7 +65,6 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
     Route::group(['prefix' => '/categories'], function () {
         Route::get('/', [\App\Http\Controllers\Api\CategoryController::class, 'index']);
     });
-
 
 
 });
