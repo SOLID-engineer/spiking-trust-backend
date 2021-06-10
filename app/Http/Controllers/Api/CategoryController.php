@@ -40,6 +40,16 @@ class CategoryController extends Controller
                             }])
                             ->with('parent')
                             ->first();
+
+        if ($category->children->isEmpty()) {
+            $category = Category::where([['status', 1], ['id', $category->parent_id]])
+                ->with(['children' => function($query) {
+                    return $query->where('status', 1);
+                }])
+                ->with('parent')
+                ->first();
+        }
+
         return response($category, 200);
     }
 }

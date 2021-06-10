@@ -39,6 +39,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::group(['prefix' => '/business', 'middleware' => ['business']], function () {
             Route::get('/companies', [\App\Http\Controllers\Api\Business\BusinessController::class, 'companies']);
             Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
+
+            Route::get('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'index']);
+            Route::post('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'store']);
+            Route::delete('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'delete']);
         });
     });
 
@@ -55,6 +59,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::post('/accept-company', [CompanyController::class, 'accept'])->middleware('auth:api');
         Route::get('/{domain}', [CompanyController::class, 'index']);
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
+
+        Route::get('/{slug}', [\App\Http\Controllers\Api\CategoryController::class, 'category']);
     });
 
 
