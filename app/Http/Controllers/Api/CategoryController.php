@@ -32,4 +32,14 @@ class CategoryController extends Controller
         }
         return response($_categories, 200);
     }
+
+    public function category ($slug, Request $request) {
+        $category = Category::where([['status', 1], ['slug', $slug]])
+                            ->with(['children' => function($query) {
+                                return $query->where('status', 1);
+                            }])
+                            ->with('parent')
+                            ->first();
+        return response($category, 200);
+    }
 }
