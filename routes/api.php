@@ -64,6 +64,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
 
     Route::group(['prefix' => '/categories'], function () {
         Route::get('/', [\App\Http\Controllers\Api\CategoryController::class, 'index']);
+        Route::get('/{slug}', [\App\Http\Controllers\Api\CategoryController::class, 'category']);
     });
 
 

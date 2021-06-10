@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -50,7 +51,7 @@ class CategoryController extends Controller
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
             $category->name = $request->name;
-            $category->slug = $request->name;
+            $category->slug = Str::slug($request->name);
             $category->created_by = $user->id;
             $category->updated_by = $user->id;
             $category->save();
@@ -90,7 +91,7 @@ class CategoryController extends Controller
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
             $category->name = $request->name;
-            $category->slug = $request->name;
+            $category->slug = Str::slug($request->name);
             $category->updated_by = $user->id;
             $category->save();
             $category = $this->_updateParent($category->id, $category->parent_id);
