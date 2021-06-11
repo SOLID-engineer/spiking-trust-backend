@@ -46,4 +46,8 @@ class Company extends Model
     {
         return $this->belongsToMany(User::class, 'company_owner', 'company_id', 'owner_id');
     }
+
+    public function categories() {
+        return $this->belongsToMany(Category::class, 'company_category', 'company_id', 'category_id');
+    }
 }
