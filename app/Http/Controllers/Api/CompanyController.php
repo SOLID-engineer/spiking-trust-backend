@@ -86,7 +86,13 @@ class CompanyController extends Controller
         $claimToken->expired_at = Carbon::now()->addWeeks(1);
         $claimToken->token = $token;
         $claimToken->save();
-        Mail::to("dangtrungkien96@gmail.com")->send(new ClaimMail($claimToken));
+        $mailData = [
+          'name' =>  $user->first_name,
+          'domain' =>  $domain,
+          'token' =>  $token,
+        ];
+
+        Mail::to("dangtrungkien96@gmail.com")->send(new ClaimMail($mailData));
 
         return response()->json($company, 200);
     }

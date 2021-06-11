@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
-    <title>HTML Tutorial</title>
+    <title></title>
     <body>
-
-        <h1>This is a heading</h1>
-        <p>This is a paragraph.</p>
-
+        <h1>Hi, </h1>
+        <h1>You just claim your company. Click here: {{ env('URL_FRONTEND').'claim-company/active?v='.$data['token'] }}</h1>
     </body>
 </html>
