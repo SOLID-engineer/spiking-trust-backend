@@ -29,8 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (App::environment() === 'production' || App::environment() === 'local') {
-           $this->app['request']->server->set('HTTPS', env('ENABLE_SSL', true));
-        }
+//        if (App::environment() === 'production' || App::environment() === 'local') {
+//           $this->app['request']->server->set('HTTPS', env('ENABLE_SSL', true));
+//        }
     }
 }

@@ -16,7 +16,7 @@ class CreateCompanyCategoryTable extends Migration
         Schema::create('company_category', function (Blueprint $table) {
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('category_id')->constrained('categories');
-            $table->boolean('is_primary');
+            $table->boolean('is_primary')->default(0);
             $table->primary(["company_id", "category_id"]);
         });
     }
