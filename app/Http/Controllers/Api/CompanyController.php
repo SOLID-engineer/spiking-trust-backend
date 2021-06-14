@@ -54,6 +54,7 @@ class CompanyController extends Controller
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws \Throwable
      */
     public function claim(Request $request)
     {
@@ -74,27 +75,31 @@ class CompanyController extends Controller
         if ($company && $company->claimed_at) {
             return response()->json([], 402);
         }
+        DB::beginTransaction();
+        try {
+            $mail = $email . '@' . $domain;
+            $user = $request->user();
+            $token = \Hash::make($user->id);
 
-        $mail = $email . '@' . $domain;
-        $user = $request->user();
-        $token = \Hash::make($user->id);
-
-        $claimToken = new ClaimToken();
-        $claimToken->user_id = $user->id;
-        $claimToken->domain = $domain;
-        $claimToken->email = $mail;
-        $claimToken->expired_at = Carbon::now()->addWeeks(1);
-        $claimToken->token = $token;
-        $claimToken->save();
-        $mailData = [
-          'name' =>  $user->first_name,
-          'domain' =>  $domain,
-          'token' =>  $token,
-        ];
-
-        Mail::to("dangtrungkien96@gmail.com")->send(new ClaimMail($mailData));
-
-        return response()->json($company, 200);
+            $claimToken = new ClaimToken();
+            $claimToken->user_id = $user->id;
+            $claimToken->domain = $domain;
+            $claimToken->email = $mail;
+            $claimToken->expired_at = Carbon::now()->addWeeks(1);
+            $claimToken->token = $token;
+            $claimToken->save();
+            $mailData = [
+                'name' => $user->first_name,
+                'domain' => $domain,
+                'token' => $token,
+            ];
+            Mail::to("dangtrungkien96@gmail.com")->send(new ClaimMail($mailData));
+            DB::commit();
+            return response()->json($company, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([], 500);
+        }
     }
 
     /**

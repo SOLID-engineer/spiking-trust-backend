@@ -2,7 +2,7 @@
 <html>
     <title></title>
     <body>
-        <h1>Hi, </h1>
-        <h1>You just claim your company. Click here: {{ env('URL_FRONTEND').'claim-company/active?v='.$data['token'] }}</h1>
+        <h4>Hi, {{ $name }}</h4>
+        <h5>You just claim your company. Click <a href="{{ env('URL_FRONTEND').'claim-company/active?v='.$token }}">here</a></h5>
     </body>
 </html>
