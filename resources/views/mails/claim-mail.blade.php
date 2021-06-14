@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
-    <title>HTML Tutorial</title>
+    <title></title>
     <body>
-
-        <h1>This is a heading</h1>
-        <p>This is a paragraph.</p>
-
+        <h4>Hi, {{ $name }}</h4>
+        <h5>You just claim your company. Click <a href="{{ env('URL_FRONTEND').'claim-company/active?v='.$token }}">here</a></h5>
     </body>
 </html>
