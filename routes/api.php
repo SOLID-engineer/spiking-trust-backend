@@ -47,9 +47,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/{domain}/review-statistics', [\App\Http\Controllers\Api\Business\CompanyController::class, 'reviewStatistics']);
             Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
 
+            Route::get('/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'list']);
             Route::get('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'index']);
             Route::post('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'store']);
             Route::delete('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'delete']);
+            Route::put('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'setDefault']);
         });
     });
 
@@ -67,7 +69,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::get('/{domain}', [CompanyController::class, 'index']);
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
 
-        Route::get('/{slug}', [\App\Http\Controllers\Api\CategoryController::class, 'category']);
+        Route::get('/categories/{category}', [\App\Http\Controllers\Api\CategoryController::class, 'getCompanyByCategory']);
     });
 
 

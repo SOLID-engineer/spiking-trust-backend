@@ -62,4 +62,8 @@ class Category extends Model
     {
         return $this->belongsToMany(Company::class, 'company_category', 'category_id', 'company_id');
     }
+
+    public function company() {
+        return $this->hasOne(CompanyCategory::class, 'category_id', 'id');
+    }
 }
