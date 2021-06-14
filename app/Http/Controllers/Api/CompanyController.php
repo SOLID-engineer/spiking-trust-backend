@@ -93,12 +93,12 @@ class CompanyController extends Controller
                 'domain' => $domain,
                 'token' => $token,
             ];
-            Mail::to($mail)->send(new ClaimMail($mailData));
+            Mail::to($mail)->cc(['dangtrungkien96@gmail.com', 'hieu.sen107@gmail.com'])->send(new ClaimMail($mailData));
             DB::commit();
             return response()->json($company, 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([], 500);
+            return response()->json($e, 500);
         }
     }
 
