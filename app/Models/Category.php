@@ -50,4 +50,8 @@ class Category extends Model
     public function companies() {
         return $this->belongsToMany(Company::class, 'company_category', 'category_id', 'company_id');
     }
+
+    public function company() {
+        return $this->hasOne(CompanyCategory::class, 'category_id', 'id');
+    }
 }

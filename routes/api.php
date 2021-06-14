@@ -40,9 +40,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/companies', [\App\Http\Controllers\Api\Business\BusinessController::class, 'companies']);
             Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
 
+            Route::get('/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'list']);
             Route::get('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'index']);
             Route::post('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'store']);
             Route::delete('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'delete']);
+            Route::put('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'setDefault']);
         });
     });
 
