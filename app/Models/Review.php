@@ -31,6 +31,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\User|null $author
+ * @method static \Database\Factories\ReviewFactory factory(...$parameters)
  */
 class Review extends Model
 {

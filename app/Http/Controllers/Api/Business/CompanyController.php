@@ -33,6 +33,23 @@ class CompanyController extends Controller
         return response()->json($company);
     }
 
+    public function update(Request $request)
+    {
+        $company = $request->get('company');
+        $rules = [
+            'name' => ['required', 'max:255'],
+            'description' => ['required', 'max:255'],
+        ];
+        $validator = \Validator::make($request->post(), $rules);
+        if ($validator->fails()) return response()->json('', 400);
+
+        $company->name = $request->post('name');
+        $company->description = $request->post('description');
+        $company->save();
+
+        return response()->json($company);
+    }
+
     public function reviewStatistics(Request $request)
     {
         $company = $request->get('company');

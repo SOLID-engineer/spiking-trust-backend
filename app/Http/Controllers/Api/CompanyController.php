@@ -26,7 +26,7 @@ class CompanyController extends Controller
     public function index(Request $request, $domain)
     {
         $domain = preg_replace("~^www\.~", "", $domain);
-        $company = Company::where("domain", $domain)->first();
+        $company = Company::where("domain", $domain)->with(['information'])->first();
         if (empty($company)) return response()->json('', 400);
         $company->average_rating = $company->reviews()->avg('rating') ?? 0;
         $company->reviews_count = $company->reviews()->count();

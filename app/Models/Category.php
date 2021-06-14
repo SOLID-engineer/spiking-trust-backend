@@ -34,20 +34,32 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUrlImage($value)
  * @mixin \Eloquent
+ * @property string $slug
+ * @property int $level
+ * @property-read \Illuminate\Database\Eloquent\Collection|Category[] $children
+ * @property-read int|null $children_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Company[] $companies
+ * @property-read int|null $companies_count
+ * @property-read Category|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|Category whereLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Category whereSlug($value)
  */
 class Category extends Model
 {
     use HasFactory;
 
-    public function children () {
+    public function children()
+    {
         return $this->hasMany(Category::class, 'parent_id', 'id');
     }
 
-    public function parent () {
+    public function parent()
+    {
         return $this->hasOne(Category::class, 'id', 'parent_id');
     }
 
-    public function companies() {
+    public function companies()
+    {
         return $this->belongsToMany(Company::class, 'company_category', 'category_id', 'company_id');
     }
 }

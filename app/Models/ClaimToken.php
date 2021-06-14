@@ -26,6 +26,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ClaimToken whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClaimToken whereUserId($value)
  * @mixin \Eloquent
+ * @property string $domain
+ * @property string $email
+ * @property-read \App\Models\Company|null $company
+ * @method static \Illuminate\Database\Eloquent\Builder|ClaimToken whereDomain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClaimToken whereEmail($value)
  */
 class ClaimToken extends Model
 {
@@ -33,8 +38,8 @@ class ClaimToken extends Model
 
     protected $table = 'claim_tokens';
 
-
-    public function company() {
+    public function company()
+    {
         return $this->hasOne(Company::class, 'id', 'company_id');
     }
 
