@@ -72,7 +72,7 @@ class CompanyController extends Controller
             ->first();
         if ($company && $company->claimed_at) return response()->json([], 402);
         DB::beginTransaction();
-        try {
+//        try {
             $mail = $email . '@' . $domain;
             $user = $request->user();
             $token = \Hash::make($user->id);
@@ -81,21 +81,22 @@ class CompanyController extends Controller
             $claimToken->domain = $domain;
             $claimToken->email = $mail;
             $claimToken->expired_at = Carbon::now()->addWeeks(1);
-            $claimToken->token = $token;
+            $claimToken->token1 = $token;
             $claimToken->save();
             $mailData = [
                 'name' => $user->first_name,
                 'domain' => $domain,
                 'token' => $token,
             ];
-//            Mail::to('dangtrungkien96@gmail.com')
-//                ->send(new ClaimMail($mailData));
+            Mail::to('dangtrungkien96@gmail.com')
+                ->send(new ClaimMail($mailData));
+
             DB::commit();
             return response()->json($company, 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json($e, 500);
-        }
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            return response()->json([], 500);
+//        }
     }
 
     /**
