@@ -62,7 +62,9 @@ class CompanyController extends Controller
             'domain' => ['required', 'between:1,255', new ValidDomain()],
             'email' => 'required'
         );
-
+        if ($request->get('test') === 1) {
+            dd(@$request->user());
+        }
         $validate = Validator::make($request->all(), $rules);
         if ($validate->fails()) return response()->json([], 400);
 
@@ -71,7 +73,7 @@ class CompanyController extends Controller
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)
             ->first();
-        if ($request->get('test') === 1) {
+        if ($request->get('test') === 4) {
             dd(@$request->user());
         }
         if ($request->get('test') === 2) {
