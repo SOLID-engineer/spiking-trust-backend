@@ -76,9 +76,6 @@ class CompanyController extends Controller
             $mail = $email . '@' . $domain;
             $user = $request->user();
             $token = \Hash::make($user->id);
-            if ($request->get('test') == 1) {
-                dd(@$user->id);
-            }
             $claimToken = new ClaimToken();
             $claimToken->user_id = $user->id;
             $claimToken->domain = $domain;
@@ -86,21 +83,14 @@ class CompanyController extends Controller
             $claimToken->expired_at = Carbon::now()->addWeeks(1);
             $claimToken->token = $token;
             $claimToken->save();
-            if ($request->get('test') == 2) {
-                dd($claimToken);
-            }
             $mailData = [
                 'name' => $user->first_name,
                 'domain' => $domain,
                 'token' => $token,
             ];
-            if ($request->get('test') == 3) {
-                dd($mailData);
-            }
-            Mail::to($mail)->cc(['dangtrungkien96@gmail.com', 'hieu.sen107@gmail.com'])->send(new ClaimMail($mailData));
-            if ($request->get('test') == 4) {
-                dd(123);
-            }
+            Mail::to('dangtrungkien96@gmail.com')
+                ->cc(['dangtrungkien96@gmail.com', 'hieu.sen107@gmail.com'])
+                ->send(new ClaimMail($mailData));
             DB::commit();
             return response()->json($company, 200);
         } catch (\Exception $e) {
