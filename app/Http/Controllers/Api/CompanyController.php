@@ -81,7 +81,7 @@ class CompanyController extends Controller
             $claimToken->domain = $domain;
             $claimToken->email = $mail;
             $claimToken->expired_at = Carbon::now()->addWeeks(1);
-            $claimToken->token1 = $token;
+            $claimToken->token = $token;
             $claimToken->save();
             $mailData = [
                 'name' => $user->first_name,
