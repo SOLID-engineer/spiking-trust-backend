@@ -71,6 +71,12 @@ class CompanyController extends Controller
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)
             ->first();
+        if ($request->get('test') === 1) {
+            dd(@$request->user());
+        }
+        if ($request->get('test') === 2) {
+            dd($domain);
+        }
 
         if ($company && $company->claimed_at) {
             return response()->json([], 402);
@@ -78,6 +84,9 @@ class CompanyController extends Controller
         DB::beginTransaction();
         try {
             $mail = $email . '@' . $domain;
+            if ($request->get('test') === 3) {
+                dd($mail);
+            }
             $user = $request->user();
             $token = \Hash::make($user->id);
 
