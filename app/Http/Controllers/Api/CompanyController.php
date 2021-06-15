@@ -89,7 +89,6 @@ class CompanyController extends Controller
                 'token' => $token,
             ];
             Mail::to('dangtrungkien96@gmail.com')
-                ->cc(['hieu.sen107@gmail.com'])
                 ->send(new ClaimMail($mailData));
             DB::commit();
             return response()->json($company, 200);
