@@ -72,7 +72,7 @@ class CompanyController extends Controller
             ->first();
         if ($company && $company->claimed_at) return response()->json([], 402);
         DB::beginTransaction();
-//        try {
+        try {
             $mail = $email . '@' . $domain;
             $user = $request->user();
             $token = \Hash::make($user->id);
@@ -93,10 +93,10 @@ class CompanyController extends Controller
 
             DB::commit();
             return response()->json($company, 200);
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            return response()->json([], 500);
-//        }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([], 500);
+        }
     }
 
     /**
