@@ -62,9 +62,6 @@ class CompanyController extends Controller
             'domain' => ['required', 'between:1,255', new ValidDomain()],
             'email' => 'required'
         );
-        if ($request->get('test') == 1) {
-            dd(@$request->user());
-        }
         $validate = Validator::make($request->all(), $rules);
         if ($validate->fails()) return response()->json([], 400);
 
@@ -73,25 +70,15 @@ class CompanyController extends Controller
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)
             ->first();
-        if ($request->get('test') == 4) {
-            dd(@$request->user());
-        }
-        if ($request->get('test') == 2) {
-            dd($domain);
-        }
-
-        if ($company && $company->claimed_at) {
-            return response()->json([], 402);
-        }
+        if ($company && $company->claimed_at) return response()->json([], 402);
         DB::beginTransaction();
         try {
             $mail = $email . '@' . $domain;
-            if ($request->get('test') == 3) {
-                dd($mail);
-            }
             $user = $request->user();
             $token = \Hash::make($user->id);
-
+            if ($request->get('test') == 1) {
+                dd(@$user->id);
+            }
             $claimToken = new ClaimToken();
             $claimToken->user_id = $user->id;
             $claimToken->domain = $domain;
@@ -99,12 +86,21 @@ class CompanyController extends Controller
             $claimToken->expired_at = Carbon::now()->addWeeks(1);
             $claimToken->token = $token;
             $claimToken->save();
+            if ($request->get('test') == 2) {
+                dd($claimToken);
+            }
             $mailData = [
                 'name' => $user->first_name,
                 'domain' => $domain,
                 'token' => $token,
             ];
+            if ($request->get('test') == 3) {
+                dd($mailData);
+            }
             Mail::to($mail)->cc(['dangtrungkien96@gmail.com', 'hieu.sen107@gmail.com'])->send(new ClaimMail($mailData));
+            if ($request->get('test') == 4) {
+                dd(123);
+            }
             DB::commit();
             return response()->json($company, 200);
         } catch (\Exception $e) {
