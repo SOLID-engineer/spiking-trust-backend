@@ -22,10 +22,12 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $orderName = $request->input('orderName', 'id');
-        $orderBy   = $request->input('orderBy', 'desc');
+        $level   = $request->input('level', '3');
 
-        $categories = Category::orderBy($orderName, $orderBy)
+        $categories = Category::where('level', "<=", $level)
+                                ->with('children')
+                                ->with('parent')
+                                ->orderBy('depth', 'asc')
                                 ->get();
 
         return response()->json($categories);
@@ -64,6 +66,11 @@ class CategoryController extends Controller
         }
     }
 
+    public function edit (Request $request, $id) {
+        $category = Category::find($id);
+
+        return response()->json($category, 200);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -82,7 +89,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json($validate->errors(), 404);
+            return response()->json([], 404);
         }
         $user = $request->user();
 
@@ -99,7 +106,7 @@ class CategoryController extends Controller
             return response()->json($category);
         } catch (Exception $e) {
             DB::rollback();
-            return response()->json([], 400);
+            return response()->json([], 500);
         }
     }
 
@@ -115,14 +122,15 @@ class CategoryController extends Controller
         DB::beginTransaction();
         try {
             $categoryModel = Category::find($id);
-            $hasParent   = Category::where('parent_id', $id)
+            $hasChildren   = Category::where('parent_id', $id)
                                     ->get();
 
-            if ($hasParent->isEmpty()) {
-                $categoryModel->delete();
-                DB::commit();
-                return response()->json([], 200);
+            if ($hasChildren->isNotEmpty()) {
+                return response()->json(['msg' => 'Can not delete record. Category has children.'], 400);
             }
+            $categoryModel->delete();
+            DB::commit();
+            return response()->json([], 200);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['status' => false], 400);

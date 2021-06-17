@@ -21,7 +21,11 @@ use App\Http\Controllers\Api\Admin\CategoryController;
 Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function () {
 
     Route::group(['prefix' => '/admin', 'middleware' => ['auth:api']], function () {
-        Route::resource('caetgories', CategoryController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('companies', \App\Http\Controllers\Api\Admin\CompanyController::class);
+
+        Route::get('settings/mail-settings', [\App\Http\Controllers\Api\Admin\MailController::class, 'index']);
+        Route::post('settings/mail-settings', [\App\Http\Controllers\Api\Admin\MailController::class, 'setting']);
     });
 
     Route::post('/token', function () {
