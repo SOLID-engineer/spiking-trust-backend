@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompaniesTable extends Migration
+class CreateBenchmarksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateCompaniesTable extends Migration
      */
     public function up()
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('benchmarks', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
-            $table->string('domain', 127)->unique();
-            $table->string('name')->nullable();
-            $table->string('description', 255)->nullable();
-            $table->timestamp('claimed_at')->nullable();
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('business_id')->constrained('companies');
+            $table->foreignUuid('company_uuid')->constrained('companies', 'uuid');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateCompaniesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('benchmarks');
     }
 }

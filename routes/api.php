@@ -45,6 +45,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/companies/{domain}', [\App\Http\Controllers\Api\Business\CompanyController::class, 'show']);
             Route::patch('/companies/{domain}', [\App\Http\Controllers\Api\Business\CompanyController::class, 'update']);
 
+            Route::get('/benchmark/{domain}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'index']);
+
             Route::get('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'show']);
             Route::patch('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'update']);
 
