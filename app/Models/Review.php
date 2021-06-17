@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,9 +37,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Review extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
 
-    protected $table = "reviews";
+    protected $uuidFields = ['uuid'];
+
+    protected $table = 'reviews';
 
     public function company()
     {
