@@ -79,7 +79,13 @@ class CategoryController extends Controller
         }
         DB::beginTransaction();
         try {
+            $isPrimary = CompanyCategory::where([['category_id', $category], ['company_id', $request->company->id]])->first();
             $request->company->categories()->detach($category);
+            if ($isPrimary) {
+                CompanyCategory::where([['is_primary', 0], ['company_id', $request->company->id]])->limit(1)->update([
+                    'is_primary' => 1
+                ]);
+            }
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();

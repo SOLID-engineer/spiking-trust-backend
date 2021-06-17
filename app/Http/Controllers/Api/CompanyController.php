@@ -62,7 +62,6 @@ class CompanyController extends Controller
             'domain' => ['required', 'between:1,255', new ValidDomain()],
             'email' => 'required'
         );
-
         $validate = Validator::make($request->all(), $rules);
         if ($validate->fails()) return response()->json([], 400);
 
@@ -71,16 +70,12 @@ class CompanyController extends Controller
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)
             ->first();
-
-        if ($company && $company->claimed_at) {
-            return response()->json([], 402);
-        }
+        if ($company && $company->claimed_at) return response()->json([], 402);
         DB::beginTransaction();
         try {
             $mail = $email . '@' . $domain;
             $user = $request->user();
             $token = \Hash::make($user->id);
-
             $claimToken = new ClaimToken();
             $claimToken->user_id = $user->id;
             $claimToken->domain = $domain;
@@ -93,7 +88,9 @@ class CompanyController extends Controller
                 'domain' => $domain,
                 'token' => $token,
             ];
-            Mail::to($mail)->send(new ClaimMail($mailData));
+            Mail::to('dangtrungkien96@gmail.com')
+                ->send(new ClaimMail($mailData));
+
             DB::commit();
             return response()->json($company, 200);
         } catch (\Exception $e) {
