@@ -47,6 +47,12 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::patch('/companies/{domain}', [\App\Http\Controllers\Api\Business\CompanyController::class, 'update']);
 
             Route::get('/benchmark/{domain}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'index']);
+            Route::post('/benchmark/{domain}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'store']);
+            Route::post('/benchmark/{domain}/positions', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'updatePositions']);
+            Route::delete('/benchmark/{domain}/{uuid}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'destroy']);
+
+            Route::post('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'store']);
+            Route::delete('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'destroy']);
 
             Route::get('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'show']);
             Route::patch('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'update']);
@@ -73,8 +79,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
     Route::group(['prefix' => '/companies'], function () {
         Route::post('/claim', [CompanyController::class, 'claim'])->middleware('auth:api');
         Route::post('/accept-company', [CompanyController::class, 'accept'])->middleware('auth:api');
+
         Route::get('/{domain}', [CompanyController::class, 'index']);
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
+
+        Route::get('/{uuid}/info', [CompanyController::class, 'info']);
 
         Route::get('/categories/{category}', [\App\Http\Controllers\Api\CategoryController::class, 'getCompanyByCategory']);
     });

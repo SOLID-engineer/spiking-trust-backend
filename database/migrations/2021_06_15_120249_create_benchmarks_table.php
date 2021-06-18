@@ -18,6 +18,8 @@ class CreateBenchmarksTable extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('business_id')->constrained('companies');
             $table->foreignUuid('company_uuid')->constrained('companies', 'uuid');
+            $table->integer('position')->default(0);
+            $table->unique(['user_id', 'business_id', 'company_uuid']);
             $table->timestamps();
         });
     }

@@ -52,4 +52,9 @@ class Review extends Model
     {
         return $this->hasOne(User::class, 'id', 'author_id');
     }
+
+    public function reply()
+    {
+        return $this->hasOne(ReviewReply::class, 'review_id', 'id');
+    }
 }

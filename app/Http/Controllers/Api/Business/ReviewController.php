@@ -19,7 +19,7 @@ class ReviewController extends Controller
         $company = $request->get('company');
         $search = $request->get('search');
         $perPage = $request->get('perPage', 5);
-        $query = Review::with(['author:id,first_name,last_name']);
+        $query = Review::with(['author:id,first_name,last_name','reply']);
         $query->where('company_id', $company->id);
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -30,4 +30,5 @@ class ReviewController extends Controller
         $reviews = $query->paginate($perPage);
         return response()->json(PaginateFormatter::format($reviews));
     }
+
 }
