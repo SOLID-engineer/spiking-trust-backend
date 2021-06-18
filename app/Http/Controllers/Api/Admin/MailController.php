@@ -65,9 +65,9 @@ class MailController extends Controller
             "type" => Setting::MAIL_SETTINGS,
         ];
 
-        Setting::insert($inserts);
+        $setting = Setting::insert($inserts);
 
-        return response()->json([], 200);
+        return response()->json($setting, 200);
     }
 
 }
