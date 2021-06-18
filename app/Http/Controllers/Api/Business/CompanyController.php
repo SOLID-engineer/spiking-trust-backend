@@ -8,6 +8,7 @@ use App\Models\Review;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -62,7 +63,7 @@ class CompanyController extends Controller
         $data = [
             'reviews_count' => $reviews_count,
             'verified_reviews_count' => 0,
-            'stars' => $query->get()->countBy('rating')
+            'stars' => $query->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all()
         ];
         return $data;
     }
