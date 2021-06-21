@@ -103,8 +103,8 @@ class CompanyController extends Controller
                 'domain' => $domain,
                 'token' => $token,
             ];
-            Mail::to('dangtrungkien96@gmail.com')
-                ->send(new ClaimMail($mailData));
+//            Mail::to('dangtrungkien96@gmail.com')
+//                ->send(new ClaimMail($mailData));
 
             DB::commit();
             return response()->json($company, 200);
