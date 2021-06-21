@@ -67,11 +67,13 @@ class ReviewController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function edit($id)
     {
-        //
+        $review = Review::find($id);
+
+        return response()->json($review, 200);
     }
 
     /**
@@ -79,11 +81,25 @@ class ReviewController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'rating' => ['required', 'numeric'],
+            'content' => ['required'],
+            'title' => ['required', 'max:255'],
+        ];
+
+        $review = Review::find($id);
+
+        $params = $request->all();
+
+        $review->rating = $params['rating'];
+        $review->content = $params['content'];
+        $review->title = $params['title'];
+        $review->save();
+        return response()->json([], 200);
     }
 
     /**

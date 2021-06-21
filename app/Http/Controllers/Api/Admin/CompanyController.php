@@ -24,7 +24,7 @@ class CompanyController extends Controller
 
         $companies = Company::orderByDesc('created_at')
             ->paginate($perPage);
-        
+
         /** @var LengthAwarePaginator $companies */
         $results = PaginateFormatter::format($companies);
 

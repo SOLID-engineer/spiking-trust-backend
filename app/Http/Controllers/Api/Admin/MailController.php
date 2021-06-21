@@ -19,7 +19,7 @@ class MailController extends Controller
         $settings = Setting::where('type', Setting::MAIL_SETTINGS)->get();
         $mail_setting = [];
         foreach ($settings as $key => $setting) {
-            $mail_setting[$setting->key] = $setting->value;
+            $mail_setting[Setting::CONST_MAIL_SETTINGS[$setting->key]] = $setting->value;
         }
 
         return response()->json($mail_setting, 200);
@@ -65,9 +65,10 @@ class MailController extends Controller
             "type" => Setting::MAIL_SETTINGS,
         ];
 
-        $setting = Setting::insert($inserts);
+        Setting::upsert($inserts, ['key'], ['value']);
+//        Setting::updateOrCreate($inserts, ['key', 'type']);
 
-        return response()->json($setting, 200);
+        return response()->json($inserts, 200);
     }
 
 }
