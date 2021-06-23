@@ -16,6 +16,7 @@ class CreateMailTemplatesTable extends Migration
         Schema::create('mail_templates', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->string('name');
             $table->string('title');
             $table->text('content');
             $table->string('type');
