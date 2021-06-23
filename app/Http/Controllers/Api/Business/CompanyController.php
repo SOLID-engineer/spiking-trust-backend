@@ -54,16 +54,18 @@ class CompanyController extends Controller
     public function reviewStatistics(Request $request)
     {
         $company = $request->get('company');
-        $from = $request->get('from', Carbon::now()->startOfDay()->toIso8601String());
-        $to = $request->get('to', Carbon::now()->endOfDay()->toIso8601String());
+        $from = $request->get('from');
+        $to = $request->get('to');
         $query = Review::where('company_id', $company->id);
-        $query->whereTime('created_at', '>=', Carbon::parse($from));
-        $query->whereTime('created_at', '<=', Carbon::parse($to));
+//        $query->whereTime('created_at', '>=', Carbon::parse($from));
+//        $query->whereTime('created_at', '<=', Carbon::parse($to));
         $reviews_count = $query->count();
+        $replied_reviews_count = $query->whereHas('reply')->count();
         $data = [
             'reviews_count' => $reviews_count,
+            'replied_reviews_count' => $replied_reviews_count,
             'verified_reviews_count' => 0,
-            'stars' => $query->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all()
+            'stars' => Review::where('company_id', $company->id)->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all()
         ];
         return $data;
     }

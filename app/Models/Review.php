@@ -37,6 +37,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Review extends Model
 {
+    const SOURCE_ORGANIC = 'organic';
+    const SOURCE_MANUAL_INVITATION = 'manual_invitation';
+
     use HasFactory, Uuid;
 
     protected $uuidFields = ['uuid'];

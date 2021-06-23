@@ -22,6 +22,8 @@ class CreateReviewsTable extends Migration
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('author_id')->constrained('users');
             $table->ipAddress('ip_address');
+            $table->string('source');
+            $table->string('reference_number')->nullable();
             $table->timestamps();
             $table->index('rating');
         });
