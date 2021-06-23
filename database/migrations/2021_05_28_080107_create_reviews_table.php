@@ -23,6 +23,7 @@ class CreateReviewsTable extends Migration
             $table->foreignId('author_id')->constrained('users');
             $table->ipAddress('ip_address');
             $table->timestamps();
+            $table->index('rating');
         });
     }
 

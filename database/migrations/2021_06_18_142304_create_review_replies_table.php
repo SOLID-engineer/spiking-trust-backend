@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSettingsTable extends Migration
+class CreateReviewRepliesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class CreateSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('review_replies', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
-            $table->string('value')->nullable();
-            $table->string('type');
+            $table->uuid('uuid')->unique();
+            $table->foreignId('review_id')->constrained('reviews');
+            $table->unique('review_id');
+            $table->text('content');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      *
@@ -28,6 +30,6 @@ class CreateSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('review_replies');
     }
 }

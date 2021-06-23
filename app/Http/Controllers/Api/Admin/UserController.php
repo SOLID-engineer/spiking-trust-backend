@@ -4,29 +4,29 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Helpers\PaginateFormatter;
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ReviewController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function index(Request $request)
     {
         $perPage = $request->input('prePage', 20);
 
-        $reviews = Review::with('company')
-            ->orderByDesc('created_at')
-            ->paginate($perPage);
+        $users = User::with('companies')
+                        ->orderByDesc('created_at')
+                        ->paginate($perPage);
 
-        /** @var LengthAwarePaginator $reviews */
-        $results = PaginateFormatter::format($reviews);
+        /** @var LengthAwarePaginator $users */
+        $results = PaginateFormatter::format($users);
 
         return response()->json($results, 200);
     }
@@ -67,13 +67,11 @@ class ReviewController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $review = Review::find($id);
-
-        return response()->json($review, 200);
+        //
     }
 
     /**
@@ -81,25 +79,11 @@ class ReviewController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $rules = [
-            'rating' => ['required', 'numeric'],
-            'content' => ['required'],
-            'title' => ['required', 'max:255'],
-        ];
-
-        $review = Review::find($id);
-
-        $params = $request->all();
-
-        $review->rating = $params['rating'];
-        $review->content = $params['content'];
-        $review->title = $params['title'];
-        $review->save();
-        return response()->json([], 200);
+        //
     }
 
     /**
@@ -108,10 +92,9 @@ class ReviewController extends Controller
      * @param  int  $id
      * @return JsonResponse
      */
-    public function destroy($id) {
-        $review  = Review::find($id);
-        $review->delete();
-
-        return response()->json([], 200);
+    public function destroy($id, Request $request)
+    {
+        $user = User::find($id);
+        return response()->json($user, 200);
     }
 }

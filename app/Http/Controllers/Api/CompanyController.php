@@ -43,10 +43,25 @@ class CompanyController extends Controller
         $domain = preg_replace("~^www\.~", "", $domain);
         $company = Company::where("domain", $domain)->first();
         if (empty($company)) abort(404);
-        $reviews = Review::with(['author:id,first_name,last_name'])
-            ->where('company_id', $company->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+
+        $query = Review::with(['author:id,first_name,last_name','reply'])
+            ->where('company_id', $company->id);
+
+        $search = $request->get('search');
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%")->orWhere('content', 'like', "%$search%");
+            });
+        }
+
+        $stars = $request->get('stars');
+        if (!empty($stars)) {
+            if (is_array($stars)) $query->whereIn('rating', $stars);
+            else $query->where('rating', $stars);
+        }
+        $query->orderBy('created_at', 'desc');
+
+        $reviews = $query->paginate(5);
         $results = PaginateFormatter::format($reviews);
         return response()->json($results, 200);
     }
@@ -88,8 +103,8 @@ class CompanyController extends Controller
                 'domain' => $domain,
                 'token' => $token,
             ];
-            Mail::to('dangtrungkien96@gmail.com')
-                ->send(new ClaimMail($mailData));
+//            Mail::to('dangtrungkien96@gmail.com')
+//                ->send(new ClaimMail($mailData));
 
             DB::commit();
             return response()->json($company, 200);
@@ -142,4 +157,23 @@ class CompanyController extends Controller
         }
     }
 
+    public function info(Request $request, $uuid)
+    {
+        $company = Company::where('uuid', $uuid)->first();
+        if (empty($company)) abort(404);
+
+        $query = Review::where('company_id', $company->id);
+        $reviews_count = $query->count();
+        $average_rating = $query->avg('rating');
+        $stars = $query->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all();
+
+        return response()->json([
+            'name' => $company->name,
+            'domain' => $company->domain,
+            'claimed_at' => $company->claimed_at,
+            'average_rating' => $average_rating,
+            'reviews_count' => $reviews_count,
+            'stars' => $stars
+        ]);
+    }
 }
