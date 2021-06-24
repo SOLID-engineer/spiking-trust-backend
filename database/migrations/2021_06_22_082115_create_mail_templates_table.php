@@ -17,9 +17,10 @@ class CreateMailTemplatesTable extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('name');
-            $table->string('title');
+            $table->string('subject');
             $table->text('content');
             $table->string('type');
+            $table->boolean('is_primary')->default(0);
             $table->timestamps();
         });
     }

@@ -23,7 +23,7 @@ class TemplateController extends Controller
         $perPage = $request->input('prePage', 20);
 
         $companies = MailTemplate::orderByDesc('created_at')
-                                ->paginate($perPage);
+            ->paginate($perPage);
 
         /** @var LengthAwarePaginator $companies */
         $results = PaginateFormatter::format($companies);
@@ -50,7 +50,7 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $rules = array(
-            'title' => 'required|max:256',
+            'subject' => 'required|max:256',
             'name' => 'required|max:256',
             'content' => 'required',
             'type' => 'required',
@@ -58,16 +58,19 @@ class TemplateController extends Controller
         $validate = \Validator::make($request->all(), $rules);
         if ($validate->fails()) return response()->json([], 400);
 
-        $title = $request->get('title');
+        $subject = $request->get('subject');
         $name = $request->get('name');
         $content = $request->get('content');
         $type = $request->get('type');
 
+        $is_primary = $this->isPrimary($request->get('is_primary'), $type);
+
         $mailTemplate = new MailTemplate();
         $mailTemplate->name = $name;
-        $mailTemplate->title = $title;
+        $mailTemplate->subject = $subject;
         $mailTemplate->content = $content;
         $mailTemplate->type = $type;
+        $mailTemplate->is_primary = $is_primary;
         $mailTemplate->save();
 
         return response()->json($mailTemplate, 200);
@@ -76,7 +79,7 @@ class TemplateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function show($id)
@@ -87,7 +90,7 @@ class TemplateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse
      */
     public function edit($id)
@@ -101,13 +104,13 @@ class TemplateController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse
      */
     public function update(Request $request, $id)
     {
         $rules = array(
-            'title' => 'required|max:256',
+            'subject' => 'required|max:256',
             'name' => 'required|max:256',
             'content' => 'required',
             'type' => 'required',
@@ -115,16 +118,19 @@ class TemplateController extends Controller
         $validate = \Validator::make($request->all(), $rules);
         if ($validate->fails()) return response()->json([], 400);
 
-        $title = $request->get('title');
+        $subject = $request->get('subject');
         $name = $request->get('name');
         $content = $request->get('content');
         $type = $request->get('type');
 
+        $is_primary = $this->isPrimary($request->get('is_primary'), $type);
+
         $mailTemplate = MailTemplate::find($id);
         $mailTemplate->name = $name;
-        $mailTemplate->title = $title;
+        $mailTemplate->subject = $subject;
         $mailTemplate->content = $content;
         $mailTemplate->type = $type;
+        $mailTemplate->is_primary = $is_primary;
         $mailTemplate->save();
 
         return response()->json($mailTemplate, 200);
@@ -133,14 +139,32 @@ class TemplateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse
      */
     public function destroy($id)
     {
-        $review  = MailTemplate::find($id);
+        $review = MailTemplate::find($id);
         $review->delete();
 
         return response()->json([], 200);
+    }
+
+    public function isPrimary($is_primary, $type, $id = null)
+    {
+        if (!$is_primary) {
+            $template = MailTemplate::where(['is_primary' => 1, 'type' => $type]);
+            if ($id) {
+                $template->where('id', '!=', $id);
+            }
+            $template->first();
+
+            return empty($template) ? false : true;
+        }
+
+        MailTemplate::where(['type' => $type])
+            ->update(['is_primary' => 0]);
+
+        return true;
     }
 }
