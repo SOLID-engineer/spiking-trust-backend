@@ -21,7 +21,7 @@ class ReviewController extends Controller
     {
         $perPage = $request->input('prePage', 20);
 
-        $reviews = Review::with('company')
+        $reviews = Review::with('company', 'author')
             ->orderByDesc('created_at')
             ->paginate($perPage);
 

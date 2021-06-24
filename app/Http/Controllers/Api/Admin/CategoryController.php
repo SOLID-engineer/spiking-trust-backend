@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -22,14 +20,20 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $level   = $request->input('level', '3');
+        $level = $request->input('level', '3');
 
-        $categories = Category::where('level', "<=", $level)
-                                ->with('children')
-                                ->with('parent')
-                                ->orderBy('depth', 'asc')
-                                ->get();
+        $category_id = $request->input('category_id', null);
 
+        $categoryModel = Category::where('level', "<=", $level);
+
+        if ($category_id) {
+            $categoryModel->where('id', '!=', $category_id);
+            $categoryModel->where('parent_id', '!=', $category_id);
+        }
+
+        $categories = $categoryModel->with('children')
+            ->with('parent')
+            ->orderBy('depth', 'asc')->get();
         return response()->json($categories);
     }
 
@@ -66,7 +70,8 @@ class CategoryController extends Controller
         }
     }
 
-    public function edit (Request $request, $id) {
+    public function edit(Request $request, $id)
+    {
         $category = Category::find($id);
 
         return response()->json($category, 200);
@@ -122,8 +127,8 @@ class CategoryController extends Controller
         DB::beginTransaction();
         try {
             $categoryModel = Category::find($id);
-            $hasChildren   = Category::where('parent_id', $id)
-                                    ->get();
+            $hasChildren = Category::where('parent_id', $id)
+                ->get();
 
             if ($hasChildren->isNotEmpty()) {
                 return response()->json(['msg' => 'Can not delete record. Category has children.'], 400);
@@ -137,15 +142,16 @@ class CategoryController extends Controller
         }
     }
 
-    public function _updateParent($id, $parent_id = 0) {
-        $categoryModel  = Category::find($id);
+    public function _updateParent($id, $parent_id = 0)
+    {
+        $categoryModel = Category::find($id);
 
         if ($parent_id == 0) {
             $categoryModel->depth = $id;
             $categoryModel->level = 1;
         } else {
-            $categoryParent       = Category::find($parent_id);
-            $categoryModel->depth = $categoryParent->depth."/".$id;
+            $categoryParent = Category::find($parent_id);
+            $categoryModel->depth = $categoryParent->depth . "/" . $id;
             $categoryModel->level = count(explode('/', $categoryModel->depth));
         }
         $categoryModel->save();
@@ -154,9 +160,10 @@ class CategoryController extends Controller
     }
 
 
-    public function _validate($request) {
+    public function _validate($request)
+    {
         $rules = array(
-            'name'    => 'between:1,255',
+            'name' => 'between:1,255',
             'parent_id' => 'required'
         );
 
