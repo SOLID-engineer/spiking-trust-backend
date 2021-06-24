@@ -90,6 +90,8 @@ class ReviewController extends Controller
             'content' => ['required'],
             'title' => ['required', 'max:255'],
         ];
+        $validate = \Validator::make($request->all(), $rules);
+        if ($validate->fails()) return response()->json([], 400);
 
         $review = Review::find($id);
 
