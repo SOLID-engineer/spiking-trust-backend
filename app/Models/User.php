@@ -44,6 +44,10 @@ use Laravel\Passport\HasApiTokens;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Company[] $companies
  * @property-read int|null $companies_count
+ * @property string $uuid
+ * @property string|null $role
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUuid($value)
  */
 class User extends Authenticatable
 {

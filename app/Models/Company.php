@@ -37,6 +37,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $owners
  * @property-read int|null $owners_count
  * @method static \Illuminate\Database\Eloquent\Builder|Company whereClaimedAt($value)
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereUuid($value)
  */
 class Company extends Model
 {

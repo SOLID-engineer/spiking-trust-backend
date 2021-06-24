@@ -34,6 +34,9 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property-read \App\Models\User|null $author
  * @method static \Database\Factories\ReviewFactory factory(...$parameters)
+ * @property string $uuid
+ * @property-read \App\Models\ReviewReply|null $reply
+ * @method static \Illuminate\Database\Eloquent\Builder|Review whereUuid($value)
  */
 class Review extends Model
 {

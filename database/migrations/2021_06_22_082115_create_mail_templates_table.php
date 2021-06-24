@@ -20,7 +20,7 @@ class CreateMailTemplatesTable extends Migration
             $table->string('subject');
             $table->text('content');
             $table->string('type');
-            $table->boolean('is_primary')->default(0);
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
     }

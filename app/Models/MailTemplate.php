@@ -27,12 +27,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|MailTemplate whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MailTemplate whereUuid($value)
  * @mixin \Eloquent
+ * @property string $name
+ * @method static \Illuminate\Database\Eloquent\Builder|MailTemplate whereName($value)
  */
 class MailTemplate extends Model
 {
+    const TYPE_SERVICE_REVIEW_INVITATION = 'service_review_invitation';
+    const TYPE_PRODUCT_REVIEW_INVITATION = 'product_review_invitation';
+    const TYPE_CLAIM_VERIFICATION = 'claim_verification';
     use HasFactory, Uuid;
     protected $uuidFields = ['uuid'];
-
-    public $table = "mail_templates";
-
+    public $table = 'mail_templates';
 }

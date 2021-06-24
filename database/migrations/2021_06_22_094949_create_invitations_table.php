@@ -16,7 +16,7 @@ class CreateInvitationsTable extends Migration
         Schema::create('invitations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
-            $table->foreignUuid('template_uuid')->constrained('mail_templates', 'uuid');
+            $table->foreignId('template_id')->constrained('mail_templates');
             $table->string('name');
             $table->string('email', 64);
             $table->string('reference_number');
@@ -25,7 +25,7 @@ class CreateInvitationsTable extends Migration
             $table->string('sender_name');
             $table->string('sender_email', 64);
             $table->string('reply_to_email', 64);
-            $table->timestamp('sent_at');
+            $table->timestamp('sent_at')->nullable();
             $table->timestamps();
         });
     }
