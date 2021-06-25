@@ -66,4 +66,13 @@ class Invitation extends Model
         'reply_to_email',
     ];
 
+
+    public function template () {
+        return $this->hasOne(MailTemplate::class, 'uuid', 'template_uuid');
+    }
+
+    public function company () {
+        return $this->hasOne(Company::class, 'id', 'company_id');
+    }
+
 }

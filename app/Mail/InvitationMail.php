@@ -11,6 +11,7 @@ class InvitationMail extends Mailable
 {
     use Queueable, SerializesModels;
     private $data;
+
     /**
      * Create a new message instance.
      *
@@ -29,11 +30,10 @@ class InvitationMail extends Mailable
     public function build()
     {
         $subject = isset($this->data['subject']) ? $this->data['subject'] : "";
-        return $this->view('mails.claim-mail')->with([
-            'name' => isset($this->data['name']) ? $this->data['name'] : "",
-            'domain' => isset($this->data['domain']) ? $this->data['domain'] : "",
-            'token' => isset($this->data['token']) ? $this->data['token'] : "",
-            'body' => isset($this->data['body']) ? $this->data['body'] : "",
-        ])->subject($subject);
+        $sender_mail = isset($this->data['sender_email']) ? $this->data['sender_email'] : "";
+        $sender_name = isset($this->data['sender_name']) ? $this->data['sender_name'] : "";
+
+        return $this->view('mails.invite-mail')->with($this->data)
+            ->from($sender_mail, $sender_name)->subject($subject);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendMailInvitation;
+use App\Models\Invitation;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,7 +34,10 @@ class MailController extends Controller
      */
     public function setting(Request $request)
     {
-
+//        $invitation = Invitation::with(['template', 'company'])->first();
+//        $mail = new SendMailInvitation($invitation);
+//        $mail->handle();
+        
         $mail_server = $request->get('mail_server', '');
         $port = $request->get('port', '');
         $username = $request->get('username', '');
