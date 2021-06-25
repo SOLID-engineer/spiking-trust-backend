@@ -68,7 +68,7 @@ class Invitation extends Model
 
 
     public function template () {
-        return $this->hasOne(MailTemplate::class, 'uuid', 'template_uuid');
+        return $this->hasOne(MailTemplate::class, 'id', 'template_id');
     }
 
     public function company () {

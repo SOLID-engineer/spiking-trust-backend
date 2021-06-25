@@ -34,10 +34,10 @@ class MailController extends Controller
      */
     public function setting(Request $request)
     {
-//        $invitation = Invitation::with(['template', 'company'])->first();
-//        $mail = new SendMailInvitation($invitation);
-//        $mail->handle();
-        
+        $invitation = Invitation::with(['template', 'company'])->first();
+        $mail = new SendMailInvitation($invitation->uuid);
+        $mail->handle();
+        dd($invitation);
         $mail_server = $request->get('mail_server', '');
         $port = $request->get('port', '');
         $username = $request->get('username', '');

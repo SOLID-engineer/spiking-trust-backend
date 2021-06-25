@@ -24,8 +24,8 @@ class CreateReviewsTable extends Migration
             $table->ipAddress('ip_address');
             $table->string('source');
             $table->string('reference_number')->nullable();
-            $table->timestamps();
             $table->index('rating');
+            $table->timestamps();
         });
     }
 
