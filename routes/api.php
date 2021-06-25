@@ -62,6 +62,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/{domain}/review-statistics', [\App\Http\Controllers\Api\Business\CompanyController::class, 'reviewStatistics']);
             Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
 
+            Route::get('/{domain}/templates', [\App\Http\Controllers\Api\Business\TemplateController::class, 'index']);
+            Route::get('/{domain}/templates/{uuid}', [\App\Http\Controllers\Api\Business\TemplateController::class, 'show']);
+
             Route::post('/{domain}/invitations/email-invitations-bulk', [\App\Http\Controllers\Api\Business\InvitationController::class, 'emailInvitationsBulk']);
 
             Route::get('/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'list']);
