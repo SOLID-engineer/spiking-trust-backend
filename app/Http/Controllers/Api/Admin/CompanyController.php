@@ -22,7 +22,10 @@ class CompanyController extends Controller
     {
         $perPage = $request->input('prePage', 20);
 
-        $companies = Company::orderByDesc('created_at')
+        $companies = Company::with(['owners' => function ($query) {
+            return $query->first();
+        }])
+            ->orderByDesc('created_at')
             ->paginate($perPage);
 
         /** @var LengthAwarePaginator $companies */
