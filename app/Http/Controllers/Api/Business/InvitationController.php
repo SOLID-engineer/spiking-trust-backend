@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Business;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendMailInvitation;
+use App\Jobs\TriggerMail;
 use App\Models\Invitation;
 use App\Models\MailTemplate;
 use Carbon\Carbon;
@@ -30,12 +31,11 @@ class InvitationController extends Controller
         if (empty($template)) return response()->json('', 400);
         \DB::beginTransaction();
         $params = [];
-        $paramsU = [];
+        $paramsUuid = [];
         try {
             foreach ($invitations as $invitation) {
                 $uuid = Uuid::uuid4();
-                SendMailInvitation::dispatch($uuid);
-                $paramsU[] = $uuid;
+                $paramsUuid[] = $uuid;
                 $params[] = [
                     'uuid' => $uuid,
                     'company_id' => $company->id,
@@ -52,6 +52,7 @@ class InvitationController extends Controller
                 ];
             }
             Invitation::insert($params);
+            TriggerMail::dispatch($paramsUuid);
             \DB::commit();
             return response()->json('');
         } catch (Exception $e) {
