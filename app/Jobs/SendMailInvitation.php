@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\InvitationMail;
+use App\Models\Company;
 use App\Models\Invitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,16 +17,16 @@ class SendMailInvitation implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
-    protected $invitation;
+    protected $invitation_uuid;
 
     /**
      * Create a new job instance.
      *
-     * @param Invitation $invitation
+     * @param $invitation_uuid
      */
-    public function __construct(Invitation $invitation)
+    public function __construct($invitation_uuid)
     {
-        $this->invitation = $invitation;
+        $this->invitation_uuid = $invitation_uuid;
     }
 
     /**
@@ -35,7 +36,10 @@ class SendMailInvitation implements ShouldQueue
      */
     public function handle()
     {
-        $invitation = $this->invitation;
+        $invitation = Invitation::with(['template', 'company'])
+            ->where('uuid', $this->invitation_uuid)
+            ->first();
+
         $params = [
             'name' => $invitation->name,
             'reference_number' => $invitation->reference_number,
@@ -44,7 +48,6 @@ class SendMailInvitation implements ShouldQueue
             'reply_to_email' => $invitation->reply_to_email,
             'subject' => $invitation->subject,
         ];
-
 
         $template = $invitation->template;
         if ($template) {
@@ -57,12 +60,15 @@ class SendMailInvitation implements ShouldQueue
                 'Stars' => view('mails.includes.star', ['link' => ''])->render(),
                 'LegalNotice' => '',
             ];
-            $params['body'] = preg_replace_callback('/\[(.*?)]/i', function ($content) use ($replaceText){
+            $params['body'] = preg_replace_callback('/\[(.*?)]/i', function ($content) use ($replaceText) {
                 if (isset($content[1]) && isset($replaceText[$content[1]])) return $replaceText[$content[1]];
                 return '';
             }, $content);
 
             Mail::to($invitation->email)->send(new InvitationMail($params));
+
+            $invitation->status = Invitation::STATUS_DELIVERED;
+            $invitation->save();
         }
     }
 }
