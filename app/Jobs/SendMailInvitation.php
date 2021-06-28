@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mail\InvitationMail;
 use App\Models\Company;
 use App\Models\Invitation;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -68,6 +69,7 @@ class SendMailInvitation implements ShouldQueue
             Mail::to($invitation->email)->send(new InvitationMail($params));
 
             $invitation->status = Invitation::STATUS_DELIVERED;
+            $invitation->send_at = Carbon::now();
             $invitation->save();
         }
     }
