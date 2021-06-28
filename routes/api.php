@@ -29,6 +29,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
 
         Route::get('settings/mail-settings', [\App\Http\Controllers\Api\Admin\MailController::class, 'index']);
         Route::post('settings/mail-settings', [\App\Http\Controllers\Api\Admin\MailController::class, 'setting']);
+
+        Route::post('upload', [\App\Http\Controllers\Api\Admin\FileController::class, 'store']);
     });
 
     Route::post('/token', function () {
