@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Business;
 
+use App\Helpers\PaginateFormatter;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendMailInvitation;
 use App\Jobs\TriggerMail;
@@ -14,6 +15,14 @@ use Ramsey\Uuid\Uuid;
 
 class InvitationController extends Controller
 {
+    public function index(Request $request)
+    {
+        $company = $request->get('company');
+        $perPage = $request->get('perPage', 10);
+        $invitations = Invitation::where('company_id', $company->id)->orderBy('id','desc')->paginate($perPage);
+        return response()->json(PaginateFormatter::format($invitations));
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
