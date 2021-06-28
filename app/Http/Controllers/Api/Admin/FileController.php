@@ -29,13 +29,14 @@ class FileController extends Controller
             $result = [];
 
             foreach ($files as $key => $fileItem) {
+                $source = Storage::disk('public')->put($path, $fileItem);
                 $file = new File();
                 $file->real_name = $fileItem->getClientOriginalName();
                 $file->extension = $fileItem->getClientOriginalExtension();
                 $file->size = $fileItem->getSize();
                 $file->mime_type = $fileItem->getMimeType();
-                $file->source = Storage::disk('public')->put($path, $fileItem);
-                $file->name =  basename($file->source);
+                $file->source = url($path.$source);
+                $file->name =  basename($source);
                 $file->created_by = $user->id;
                 $file->save();
                 $result[] = $file;
@@ -50,12 +51,13 @@ class FileController extends Controller
         if ($validate->fails()) return response()->json([], 400);
 
         $file = new File();
+        $source = Storage::disk('public')->put($path, $files);
         $file->real_name = $files->getClientOriginalName();
         $file->extension = $files->getClientOriginalExtension();
         $file->size = $files->getSize();
         $file->mime_type = $files->getMimeType();
-        $file->source = Storage::disk('public')->put($path, $files);
-        $file->name =  basename($file->source);
+        $file->source = url($path.$source);
+        $file->name =  basename($source);
         $file->created_by = $user->id;
         $file->save();
         return response()->json($file, 200);
