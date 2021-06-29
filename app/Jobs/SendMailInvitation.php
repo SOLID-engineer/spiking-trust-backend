@@ -41,6 +41,21 @@ class SendMailInvitation implements ShouldQueue
             ->where('uuid', $this->invitation_uuid)
             ->first();
 
+        $exist = Invitation::where([
+            ['email', $invitation->email],
+            ['reference_number', $invitation->reference_number],
+            ['company_id', $invitation->company_id],
+            ['id', '!=', $invitation->id],
+            ['status', Invitation::STATUS_DELIVERED],
+        ])->first();
+
+        if ($exist) {
+            $invitation->status = Invitation::STATUS_NOT_DELIVERED;
+            $invitation->send_at = Carbon::now();
+            $invitation->save();
+            return;
+        }
+
         $params = [
             'name' => $invitation->name,
             'reference_number' => $invitation->reference_number,
@@ -72,5 +87,6 @@ class SendMailInvitation implements ShouldQueue
             $invitation->send_at = Carbon::now();
             $invitation->save();
         }
+        return;
     }
 }
