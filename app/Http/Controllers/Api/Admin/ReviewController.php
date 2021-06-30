@@ -87,11 +87,11 @@ class ReviewController extends Controller
     {
         $rules = [
             'rating' => ['required', 'numeric'],
-            'content' => ['required'],
-            'title' => ['required', 'max:255'],
+            'content' => ['required', 'min:10'],
+            'title' => ['required', 'max:255', 'min:3'],
         ];
         $validate = \Validator::make($request->all(), $rules);
-        if ($validate->fails()) return response()->json([], 400);
+        if ($validate->fails()) return response()->json($validate->errors(), 400);
 
         $review = Review::find($id);
 
