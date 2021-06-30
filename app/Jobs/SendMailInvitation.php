@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mail\InvitationMail;
 use App\Models\Company;
 use App\Models\Invitation;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -40,6 +41,20 @@ class SendMailInvitation implements ShouldQueue
             ->where('uuid', $this->invitation_uuid)
             ->first();
 
+        $exist = Invitation::where([
+            ['email', $invitation->email],
+            ['reference_number', $invitation->reference_number],
+            ['company_id', $invitation->company_id],
+            ['id', '!=', $invitation->id],
+            ['status', Invitation::STATUS_DELIVERED],
+        ])->first();
+
+        if ($exist) {
+            $invitation->status = Invitation::STATUS_NOT_DELIVERED;
+            $invitation->save();
+            return;
+        }
+
         $params = [
             'name' => $invitation->name,
             'reference_number' => $invitation->reference_number,
@@ -68,7 +83,9 @@ class SendMailInvitation implements ShouldQueue
             Mail::to($invitation->email)->send(new InvitationMail($params));
 
             $invitation->status = Invitation::STATUS_DELIVERED;
+            $invitation->sent_at = Carbon::now();
             $invitation->save();
         }
+        return;
     }
 }
