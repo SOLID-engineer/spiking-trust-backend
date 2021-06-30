@@ -8,5 +8,5 @@ RUN composer install
 
 COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-CMD php artisan key:generate && php artisan passport:install && php artisan serve --host=0.0.0.0 --port=80 && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+CMD php artisan key:generate && php artisan passport:install && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=80 && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 80
