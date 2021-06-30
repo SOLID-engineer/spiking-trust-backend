@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendMailInvitation;
+use App\Mail\InvitationMail;
 use App\Models\Invitation;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class MailController extends Controller
 {
@@ -34,10 +36,11 @@ class MailController extends Controller
      */
     public function setting(Request $request)
     {
-        $invitation = Invitation::with(['template', 'company'])->first();
-        $mail = new SendMailInvitation($invitation->uuid);
-        $mail->handle();
-        dd($invitation);
+//        $invitation = Invitation::with(['template', 'company'])->first();
+//        $mail = new SendMailInvitation($invitation->uuid);
+//        $mail->handle();
+//        Mail::to('dangtrungkien96@gmail.com')->send(new InvitationMail([]));
+//        dd(1);
         $mail_server = $request->get('mail_server', '');
         $port = $request->get('port', '');
         $username = $request->get('username', '');

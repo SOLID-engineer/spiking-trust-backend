@@ -51,7 +51,6 @@ class SendMailInvitation implements ShouldQueue
 
         if ($exist) {
             $invitation->status = Invitation::STATUS_NOT_DELIVERED;
-            $invitation->send_at = Carbon::now();
             $invitation->save();
             return;
         }
@@ -84,7 +83,7 @@ class SendMailInvitation implements ShouldQueue
             Mail::to($invitation->email)->send(new InvitationMail($params));
 
             $invitation->status = Invitation::STATUS_DELIVERED;
-            $invitation->send_at = Carbon::now();
+            $invitation->sent_at = Carbon::now();
             $invitation->save();
         }
         return;
