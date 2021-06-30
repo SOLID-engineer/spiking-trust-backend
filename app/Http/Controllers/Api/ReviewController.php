@@ -37,8 +37,7 @@ class ReviewController extends Controller
         $review->content = $params['content'];
         $review->title = $params['title'];
         $review->author_id = $request->user()->id;
-
-
+        $review->source = Review::SOURCE_ORGANIC;
         $review->company_id = $company->id;
         $review->ip_address = $request->ip();
         $review->save();

@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -68,5 +69,19 @@ class CompanyController extends Controller
             'stars' => Review::where('company_id', $company->id)->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all()
         ];
         return $data;
+    }
+
+    public function logo(Request $request)
+    {
+        $company = $request->get('company');
+        $request->validate(['image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']);
+        if (!$request->hasFile('image')) {
+            return response()->json('', 400);
+        }
+        $image = $request->file('image');
+        $path = Storage::disk('public')->putFile('company-profile-image', $image);
+        $company->profile_image = $path;
+        $company->save();
+        return response()->json($company);
     }
 }

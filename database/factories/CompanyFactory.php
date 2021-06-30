@@ -24,7 +24,7 @@ class CompanyFactory extends Factory
         $name = $this->faker->domainWord();
         return [
             'domain' => $this->faker->unique()->regexify($name . '\.(com|vn|com\.vn|fn|fr|jp|vip)'),
-            'name' => $name,
+            'name' => ucfirst($name),
             'description' => $this->faker->text(200),
         ];
     }
