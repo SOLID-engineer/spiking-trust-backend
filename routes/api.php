@@ -55,6 +55,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::post('/benchmark/{domain}/positions', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'updatePositions']);
             Route::delete('/benchmark/{domain}/{uuid}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'destroy']);
 
+            Route::post('/{domain}/logo', [\App\Http\Controllers\Api\Business\CompanyController::class, 'logo']);
+
             Route::post('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'store']);
             Route::delete('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'destroy']);
 
@@ -67,6 +69,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/{domain}/templates', [\App\Http\Controllers\Api\Business\TemplateController::class, 'index']);
             Route::get('/{domain}/templates/{uuid}', [\App\Http\Controllers\Api\Business\TemplateController::class, 'show']);
 
+            Route::get('/{domain}/invitations', [\App\Http\Controllers\Api\Business\InvitationController::class, 'index']);
             Route::post('/{domain}/invitations/email-invitations-bulk', [\App\Http\Controllers\Api\Business\InvitationController::class, 'emailInvitationsBulk']);
 
             Route::get('/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'list']);
