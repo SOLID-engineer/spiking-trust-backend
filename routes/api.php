@@ -21,7 +21,16 @@ use App\Http\Controllers\Api\Admin\CategoryController;
 Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function () {
 
     Route::group(['prefix' => '/admin', 'middleware' => ['auth:api']], function () {
-        Route::resource('caetgories', CategoryController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('companies', \App\Http\Controllers\Api\Admin\CompanyController::class);
+        Route::resource('reviews', \App\Http\Controllers\Api\Admin\ReviewController::class);
+        Route::resource('users', \App\Http\Controllers\Api\Admin\UserController::class);
+        Route::resource('mail-templates', \App\Http\Controllers\Api\Admin\TemplateController::class);
+
+        Route::get('settings/mail-settings', [\App\Http\Controllers\Api\Admin\MailController::class, 'index']);
+        Route::post('settings/mail-settings', [\App\Http\Controllers\Api\Admin\MailController::class, 'setting']);
+
+        Route::post('upload', [\App\Http\Controllers\Api\Admin\FileController::class, 'store']);
     });
 
     Route::post('/token', function () {
@@ -41,11 +50,27 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/companies/{domain}', [\App\Http\Controllers\Api\Business\CompanyController::class, 'show']);
             Route::patch('/companies/{domain}', [\App\Http\Controllers\Api\Business\CompanyController::class, 'update']);
 
+            Route::get('/benchmark/{domain}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'index']);
+            Route::post('/benchmark/{domain}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'store']);
+            Route::post('/benchmark/{domain}/positions', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'updatePositions']);
+            Route::delete('/benchmark/{domain}/{uuid}', [\App\Http\Controllers\Api\Business\BenchmarkController::class, 'destroy']);
+
+            Route::post('/{domain}/logo', [\App\Http\Controllers\Api\Business\CompanyController::class, 'logo']);
+
+            Route::post('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'store']);
+            Route::delete('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'destroy']);
+
             Route::get('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'show']);
             Route::patch('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'update']);
 
             Route::get('/{domain}/review-statistics', [\App\Http\Controllers\Api\Business\CompanyController::class, 'reviewStatistics']);
             Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
+
+            Route::get('/{domain}/templates', [\App\Http\Controllers\Api\Business\TemplateController::class, 'index']);
+            Route::get('/{domain}/templates/{uuid}', [\App\Http\Controllers\Api\Business\TemplateController::class, 'show']);
+
+            Route::get('/{domain}/invitations', [\App\Http\Controllers\Api\Business\InvitationController::class, 'index']);
+            Route::post('/{domain}/invitations/email-invitations-bulk', [\App\Http\Controllers\Api\Business\InvitationController::class, 'emailInvitationsBulk']);
 
             Route::get('/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'list']);
             Route::get('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'index']);
@@ -68,6 +93,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::post('/accept-company', [CompanyController::class, 'accept'])->middleware('auth:api');
         Route::get('/{domain}', [CompanyController::class, 'index']);
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
+
+        Route::get('/{uuid}/info', [CompanyController::class, 'info']);
 
         Route::get('/categories/{category}', [\App\Http\Controllers\Api\CategoryController::class, 'getCompanyByCategory']);
     });

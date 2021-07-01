@@ -8,6 +8,8 @@ use App\Models\Review;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -53,17 +55,33 @@ class CompanyController extends Controller
     public function reviewStatistics(Request $request)
     {
         $company = $request->get('company');
-        $from = $request->get('from', Carbon::now()->startOfDay()->toIso8601String());
-        $to = $request->get('to', Carbon::now()->endOfDay()->toIso8601String());
+        $from = $request->get('from');
+        $to = $request->get('to');
         $query = Review::where('company_id', $company->id);
-        $query->whereTime('created_at', '>=', Carbon::parse($from));
-        $query->whereTime('created_at', '<=', Carbon::parse($to));
+//        $query->whereTime('created_at', '>=', Carbon::parse($from));
+//        $query->whereTime('created_at', '<=', Carbon::parse($to));
         $reviews_count = $query->count();
+        $replied_reviews_count = $query->whereHas('reply')->count();
         $data = [
             'reviews_count' => $reviews_count,
+            'replied_reviews_count' => $replied_reviews_count,
             'verified_reviews_count' => 0,
-            'stars' => $query->get()->countBy('rating')
+            'stars' => Review::where('company_id', $company->id)->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all()
         ];
         return $data;
+    }
+
+    public function logo(Request $request)
+    {
+        $company = $request->get('company');
+        $request->validate(['image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']);
+        if (!$request->hasFile('image')) {
+            return response()->json('', 400);
+        }
+        $image = $request->file('image');
+        $path = Storage::disk('public')->putFile('company-profile-image', $image);
+        $company->profile_image = $path;
+        $company->save();
+        return response()->json($company);
     }
 }

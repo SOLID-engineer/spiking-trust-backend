@@ -15,13 +15,16 @@ class CreateReviewsTable extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-//            $table->uuid('uuid');
+            $table->uuid('uuid')->unique();
             $table->tinyInteger('rating')->unsigned();
             $table->string('title', 255);
             $table->text('content');
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('author_id')->constrained('users');
             $table->ipAddress('ip_address');
+            $table->string('source');
+            $table->string('reference_number')->nullable();
+            $table->index('rating');
             $table->timestamps();
         });
     }

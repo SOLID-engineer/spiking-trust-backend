@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read Category|null $parent
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereSlug($value)
+ * @property-read \App\Models\CompanyCategory|null $company
  */
 class Category extends Model
 {

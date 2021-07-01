@@ -29,6 +29,7 @@ class ReviewFactory extends Factory
             'author_id' => User::all()->random(1)->first()->id,
             'title' => $this->faker->text(100),
             'content' => $this->faker->paragraph(),
+            'source' => Review::SOURCE_ORGANIC,
             'ip_address' => mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255),
         ];
     }

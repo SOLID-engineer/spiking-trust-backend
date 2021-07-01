@@ -26,10 +26,10 @@ class UserController extends Controller
         $client = new \GuzzleHttp\Client();
         try {
             $response = $client->get('https://web-dev.spiking.com/oauth', ['query' => $query]);
-            $data = json_decode($response->getBody()->getContents(),true);
+            $data = json_decode($response->getBody()->getContents(), true);
             if (!empty($data['data']['access_token'])) {
                 $response = $client->get('https://api-dev.spiking.com/v3/me', ['query' => ['access_token' => $data['data']['access_token']]]);
-                $data = json_decode($response->getBody()->getContents(),true);
+                $data = json_decode($response->getBody()->getContents(), true);
                 $user = User::where('spiking_id', $data['Id'])->first();
                 if (empty($user)) {
                     $user = new User();
@@ -40,7 +40,17 @@ class UserController extends Controller
                     $user->password = Hash::make('password');
                     $user->save();
                 }
-                return response()->json(['accessToken' => $user->createToken('accessToken')->accessToken]);
+                return response()->json([
+                    'accessToken' => $user->createToken('accessToken')->accessToken,
+                    'user' => [
+                        'uuid' => $user->uuid,
+                        'spiking_id' => $user->spiking_id,
+                        'first_name' => $user->first_name,
+                        'last_name' => $user->last_name,
+                        'email' => $user->email,
+                        'role' => 'admin'
+                    ],
+                ]);
             }
         } catch (GuzzleException $e) {
             return response()->json(null, 500);

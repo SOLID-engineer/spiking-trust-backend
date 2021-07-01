@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,12 +34,20 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property-read \App\Models\User|null $author
  * @method static \Database\Factories\ReviewFactory factory(...$parameters)
+ * @property string $uuid
+ * @property-read \App\Models\ReviewReply|null $reply
+ * @method static \Illuminate\Database\Eloquent\Builder|Review whereUuid($value)
  */
 class Review extends Model
 {
-    use HasFactory;
+    const SOURCE_ORGANIC = 'organic';
+    const SOURCE_MANUAL_INVITATION = 'manual_invitation';
 
-    protected $table = "reviews";
+    use HasFactory, Uuid;
+
+    protected $uuidFields = ['uuid'];
+
+    protected $table = 'reviews';
 
     public function company()
     {
@@ -48,5 +57,10 @@ class Review extends Model
     public function author()
     {
         return $this->hasOne(User::class, 'id', 'author_id');
+    }
+
+    public function reply()
+    {
+        return $this->hasOne(ReviewReply::class, 'review_id', 'id');
     }
 }

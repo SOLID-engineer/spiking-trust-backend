@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,10 +37,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $owners
  * @property-read int|null $owners_count
  * @method static \Illuminate\Database\Eloquent\Builder|Company whereClaimedAt($value)
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereUuid($value)
  */
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
+
+    protected $uuidFields = ['uuid'];
 
     protected $table = 'companies';
 
