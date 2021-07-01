@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\CrawlCategories;
 use App\Models\MailTemplate;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +18,8 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory(10)->create();
         \App\Models\Company::factory(100)->create();
         \App\Models\Review::factory(1000)->create();
+
+        CrawlCategories::getCategories();
 
         // Mail templates
         $model = new MailTemplate();
@@ -318,7 +321,7 @@ u + #body a {
 		.section__legalnotice__two-split {
 			min-width: 200% !important;
 		}
-		       
+
 	</style>
 </head>
 <body id="body" style="width: 100% !important; -webkit-text-size-adjust: none; margin: 0; padding: 0; background-color: #fff;">
@@ -339,17 +342,17 @@ u + #body a {
 							<tbody>
 								<tr>
 									<td style="border-collapse: collapse;">
-									
+
 									<div style="color: #505050; font-family: Times New Roman; font-size: 14px; line-height: 150%; text-align: left;"><br>
 									<strong>Dear [Name],
 </strong><br>
 									<br>
 									Thank you for choosing [CompanyIdentifier]. <br>
-									
+
 									<div class="stars" style="color: #505050; font-family: Times New Roman; font-size: 14px; line-height: 150%; text-align: left; width: 100%; margin-top: 2em;">
 										<h3 style="color: #202020; display: block; font-family: Arial; font-size: 26px; font-weight: bold; line-height: 100%; margin-top: 0; margin-right: 0; margin-bottom: 10px; margin-left: 0; text-align: left;"><a class="tp-link" href="[Link]" style="color: #0c59f2; font-weight: normal; line-height: 1em; text-decoration: underline; font-size: 18px;">How did we do?
 </a></h3>
-										
+
 
 										[Stars]
 
@@ -360,16 +363,16 @@ u + #body a {
 
 									<br>
 									<br>
-									
 
-									
+
+
 
 									<strong>Please note:</strong>  This email is sent automatically, so you may have received this review invitation before the arrival of your package or service. In this case, you are welcome to wait with writing your review until your package or service arrives. &nbsp;
 <br>
 									<br>
 
 									[LegalNotice]
-								    
+
 									</div></td>
 								</tr>
 							</tbody>

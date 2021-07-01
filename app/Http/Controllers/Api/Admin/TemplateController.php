@@ -63,14 +63,14 @@ class TemplateController extends Controller
         $content = $request->get('content');
         $type = $request->get('type');
 
-        $is_primary = $this->isPrimary($request->get('is_primary'), $type);
+        $is_default = $this->isPrimary($request->get('is_default'), $type);
 
         $mailTemplate = new MailTemplate();
         $mailTemplate->name = $name;
         $mailTemplate->subject = $subject;
         $mailTemplate->content = $content;
         $mailTemplate->type = $type;
-        $mailTemplate->is_primary = $is_primary;
+        $mailTemplate->is_default = $is_default;
         $mailTemplate->save();
 
         return response()->json($mailTemplate, 200);
@@ -123,14 +123,14 @@ class TemplateController extends Controller
         $content = $request->get('content');
         $type = $request->get('type');
 
-        $is_primary = $this->isPrimary($request->get('is_primary'), $type);
+        $is_default = $this->isPrimary($request->get('is_default'), $type);
 
         $mailTemplate = MailTemplate::find($id);
         $mailTemplate->name = $name;
         $mailTemplate->subject = $subject;
         $mailTemplate->content = $content;
         $mailTemplate->type = $type;
-        $mailTemplate->is_primary = $is_primary;
+        $mailTemplate->is_default = $is_default;
         $mailTemplate->save();
 
         return response()->json($mailTemplate, 200);
@@ -150,10 +150,10 @@ class TemplateController extends Controller
         return response()->json([], 200);
     }
 
-    public function isPrimary($is_primary, $type, $id = null)
+    public function isPrimary($is_default, $type, $id = null)
     {
-        if (!$is_primary) {
-            $template = MailTemplate::where(['is_primary' => 1, 'type' => $type]);
+        if (!$is_default) {
+            $template = MailTemplate::where(['is_default' => 1, 'type' => $type]);
             if ($id) {
                 $template->where('id', '!=', $id);
             }
@@ -163,7 +163,7 @@ class TemplateController extends Controller
         }
 
         MailTemplate::where(['type' => $type])
-            ->update(['is_primary' => 0]);
+            ->update(['is_default' => 0]);
 
         return true;
     }
