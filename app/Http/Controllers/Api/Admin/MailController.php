@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendMailInvitation;
+use App\Mail\ClaimMail;
 use App\Mail\InvitationMail;
 use App\Models\Invitation;
 use App\Models\Setting;
@@ -36,11 +37,13 @@ class MailController extends Controller
      */
     public function setting(Request $request)
     {
-//        $invitation = Invitation::with(['template', 'company'])->first();
-//        $mail = new SendMailInvitation($invitation->uuid);
-//        $mail->handle();
-//        Mail::to('dangtrungkien96@gmail.com')->send(new InvitationMail([]));
-//        dd(1);
+        $mailData = [
+            'name' => "Đặng Kiên",
+            'domain' => '32',
+            'token' => "yJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.",
+        ];
+        Mail::to('dangtrungkien96@gmail.com')->send(new ClaimMail($mailData));
+        dd(321);
         $mail_server = $request->get('mail_server', '');
         $port = $request->get('port', '');
         $username = $request->get('username', '');

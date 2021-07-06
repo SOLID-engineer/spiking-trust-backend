@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -30,10 +31,22 @@ class ClaimMail extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.claim-mail')->with([
-            'name' => isset($this->data['name']) ? $this->data['name'] : "",
-            'domain' => isset($this->data['domain']) ? $this->data['domain'] : "",
-            'token' => isset($this->data['token']) ? $this->data['token'] : "",
-        ]);
+        Setting::setMailConfigBeforeSend();
+        $setting = Setting::where('type', Setting::MAIL_INVITATION)->first();
+        $content = $setting->value;
+        $href = env('URL_FRONTEND').'/claim-company/active?v='.isset($token) ?? '';
+
+        $replaceText = [
+            'Name' => $this->data['name'],
+            'Domain' => $this->data['domain'],
+            'Token' => $this->data['token'],
+            'Href' => $href,
+        ];
+        $body = preg_replace_callback('/\[(.*?)]/i', function ($content) use ($replaceText) {
+            if (isset($content[1]) && isset($replaceText[$content[1]])) return $replaceText[$content[1]];
+            return '';
+        }, $content);
+
+        return $this->html($body);
     }
 }

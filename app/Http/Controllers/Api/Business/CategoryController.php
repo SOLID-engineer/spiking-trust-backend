@@ -50,10 +50,14 @@ class CategoryController extends Controller
             return response()->json([], 400);
         }
         $category = Category::with('children')->find($category);
+
         if ($category->status != 1 || !$category->children->isEmpty()) {
             return response()->json([], 400);
         }
         $company = Company::with('categories')->find($request->company->id);
+        if (!empty($company['categories']) && count($company['categories']) > 5) {
+            return response()->json([], 400);
+        }
         DB::beginTransaction();
         try {
             if ($company->categories->isNotEmpty()) {
@@ -85,9 +89,9 @@ class CategoryController extends Controller
             $isPrimary = CompanyCategory::where([['category_id', $category], ['company_id', $request->company->id]])->first();
             $request->company->categories()->detach($category);
             if ($isPrimary) {
-                CompanyCategory::where([['is_primary', 0], ['company_id', $request->company->id]])->limit(1)->update([
-                    'is_primary' => 1
-                ]);
+                $company = CompanyCategory::where([['is_primary', 0], ['company_id', $request->company->id]])->first();
+                CompanyCategory::where([['category_id', $company->category_id], ['company_id', $request->company->id]])
+                            ->update(['is_primary' => 1]);
             }
             DB::commit();
         } catch (\Exception $exception) {

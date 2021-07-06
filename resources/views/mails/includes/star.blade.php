@@ -36,7 +36,6 @@
     }
 
     .spiking-star .image-star img {
-
         border: 0;
         line-height: 100%;
         outline: none;
@@ -45,6 +44,7 @@
         width: 100%;
         vertical-align: middle;
         height: auto !important;
+        max-width: 150px;
     }
 
     .spiking-star .spiking-image-star {
