@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Business;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Invitation;
 use App\Models\Review;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -52,6 +53,29 @@ class CompanyController extends Controller
         return response()->json($company);
     }
 
+    public function invitationStatistics(Request $request)
+    {
+        $company = $request->get('company');
+        $number_of_invitations_delivered = Invitation::where('company_id', $company->id)
+            ->where('status', Invitation::STATUS_DELIVERED)
+            ->where('created_at', '>', Carbon::now()->startOfDay()->subDays(28))
+            ->count();
+        $number_of_invitations_not_delivered = Invitation::where('company_id', $company->id)
+            ->where('status', Invitation::STATUS_NOT_DELIVERED)
+            ->where('created_at', '>', Carbon::now()->startOfDay()->subDays(28))
+            ->count();
+        $number_of_invitations_cancelled = Invitation::where('company_id', $company->id)
+            ->where('status', Invitation::STATUS_CANCELLED)
+            ->where('created_at', '>', Carbon::now()->startOfDay()->subDays(28))
+            ->count();
+
+        return response()->json([
+            'number_of_invitations_delivered' => $number_of_invitations_delivered,
+            'number_of_invitations_not_delivered' => $number_of_invitations_not_delivered,
+            'number_of_invitations_cancelled' => $number_of_invitations_cancelled
+        ]);
+    }
+
     public function reviewStatistics(Request $request)
     {
         $company = $request->get('company');
@@ -62,13 +86,13 @@ class CompanyController extends Controller
 //        $query->whereTime('created_at', '<=', Carbon::parse($to));
         $reviews_count = $query->count();
         $replied_reviews_count = $query->whereHas('reply')->count();
-        $data = [
+        $stars = Review::where('company_id', $company->id)->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all();
+        return response()->json([
             'reviews_count' => $reviews_count,
             'replied_reviews_count' => $replied_reviews_count,
             'verified_reviews_count' => 0,
-            'stars' => Review::where('company_id', $company->id)->select(['rating', DB::raw('count(*) as count')])->groupBy('rating')->get()->pluck('count', 'rating')->all()
-        ];
-        return $data;
+            'stars' => $stars
+        ]);
     }
 
     public function logo(Request $request)

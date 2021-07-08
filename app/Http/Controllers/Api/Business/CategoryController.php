@@ -70,7 +70,7 @@ class CategoryController extends Controller
             DB::rollBack();
             return response()->json([], 500);
         }
-        return response()->json([], 200);
+        return response()->json([]);
     }
 
     /**
@@ -86,12 +86,21 @@ class CategoryController extends Controller
         }
         DB::beginTransaction();
         try {
-            $isPrimary = CompanyCategory::where([['category_id', $category], ['company_id', $request->company->id]])->first();
-            $request->company->categories()->detach($category);
-            if ($isPrimary) {
-                $company = CompanyCategory::where([['is_primary', 0], ['company_id', $request->company->id]])->first();
-                CompanyCategory::where([['category_id', $company->category_id], ['company_id', $request->company->id]])
-                            ->update(['is_primary' => 1]);
+            CompanyCategory::where([
+                ['category_id', $category],
+                ['company_id', $request->company->id]
+            ])->delete();
+            $isPrimaryExist = CompanyCategory::where([
+                ['is_primary', 1],
+                ['company_id', $request->company->id]
+            ])->count();
+            if (!$isPrimaryExist) {
+                CompanyCategory::where([
+                    ['is_primary', 0],
+                    ['company_id', $request->company->id]
+                ])
+                    ->limit(1)
+                    ->update(['is_primary' => 1]);
             }
             DB::commit();
         } catch (\Exception $exception) {
@@ -114,7 +123,6 @@ class CategoryController extends Controller
         }
         DB::beginTransaction();
         try {
-
             CompanyCategory::where([['company_id', $request->company->id], ['is_primary', 1]])->update([
                 'is_primary' => 0
             ]);

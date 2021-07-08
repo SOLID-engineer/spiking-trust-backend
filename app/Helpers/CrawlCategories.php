@@ -42,8 +42,8 @@ class CrawlCategories {
         $category->status = 1;
         $category->name = $item['displayName'];
         $category->slug = Str::slug($item['name']);
-        $category->created_by = 11;
-        $category->updated_by = 11;
+        $category->created_by = 1;
+        $category->updated_by = 1;
         $category->save();
         $categoryCtrl = new CategoryController();
         $categoryCtrl->_updateParent($category->id, $category->parent_id);

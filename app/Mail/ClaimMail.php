@@ -34,8 +34,7 @@ class ClaimMail extends Mailable
         Setting::setMailConfigBeforeSend();
         $setting = Setting::where('type', Setting::MAIL_INVITATION)->first();
         $content = $setting->value;
-        $href = env('URL_FRONTEND').'/claim-company/active?v='.isset($token) ?? '';
-
+        $href = env('FRONTEND_URL').'/claim-company/active?v='.isset($token) ?? '';
         $replaceText = [
             'Name' => $this->data['name'],
             'Domain' => $this->data['domain'],
@@ -46,7 +45,6 @@ class ClaimMail extends Mailable
             if (isset($content[1]) && isset($replaceText[$content[1]])) return $replaceText[$content[1]];
             return '';
         }, $content);
-
         return $this->html($body);
     }
 }

@@ -30,8 +30,8 @@ class Setting extends Model
 {
     use HasFactory;
 
-    CONST MAIL_SETTINGS="MAIL_SETTINGS";
-    CONST MAIL_INVITATION="MAIL_INVITATION";
+    CONST MAIL_SETTINGS = "MAIL_SETTINGS";
+    CONST MAIL_INVITATION = "MAIL_INVITATION";
 
     const CONST_MAIL_SETTINGS = [
         'MAIL_HOST' => 'mail_server',
@@ -41,7 +41,8 @@ class Setting extends Model
         'MAIL_ENCRYPTION' => 'encryption',
     ];
 
-    public static function setMailConfigBeforeSend () {
+    public static function setMailConfigBeforeSend()
+    {
         $mail_setting = self::where('type', self::MAIL_SETTINGS)->get();
         if ($mail_setting->isNotEmpty()) {
             $mail_setting = $mail_setting->keyBy('key');

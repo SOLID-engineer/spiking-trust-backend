@@ -60,12 +60,18 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
 
             Route::post('/{domain}/logo', [\App\Http\Controllers\Api\Business\CompanyController::class, 'logo']);
 
+            Route::get('/{domain}/statistics/reviews-numbers-overview', [\App\Http\Controllers\Api\Business\StatisticController::class, 'reviewsNumbersOverview']);
+            Route::get('/{domain}/statistics/invitations-overview', [\App\Http\Controllers\Api\Business\StatisticController::class, 'invitationsOverview']);
+            Route::get('/{domain}/statistics/period-performance', [\App\Http\Controllers\Api\Business\StatisticController::class, 'periodPerformance']);
+            Route::get('/{domain}/statistics/engagement', [\App\Http\Controllers\Api\Business\StatisticController::class, 'engagement']);
+
             Route::post('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'store']);
             Route::delete('/{domain}/reviews/{uuid}', [\App\Http\Controllers\Api\Business\ReviewReplyController::class, 'destroy']);
 
             Route::get('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'show']);
             Route::patch('/company-information/{domain}', [\App\Http\Controllers\Api\Business\CompanyInformationController::class, 'update']);
 
+            Route::get('/{domain}/invitation-statistics', [\App\Http\Controllers\Api\Business\CompanyController::class, 'invitationStatistics']);
             Route::get('/{domain}/review-statistics', [\App\Http\Controllers\Api\Business\CompanyController::class, 'reviewStatistics']);
             Route::get('/{domain}/reviews', [\App\Http\Controllers\Api\Business\ReviewController::class, 'index']);
 
@@ -79,7 +85,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
             Route::get('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'index']);
             Route::post('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'store']);
             Route::delete('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'delete']);
-            Route::put('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'setDefault']);
+            Route::patch('/{domain}/categories', [\App\Http\Controllers\Api\Business\CategoryController::class, 'setDefault']);
         });
     });
 
@@ -98,6 +104,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['json.response']], function ()
         Route::get('/{domain}/reviews', [CompanyController::class, 'reviews']);
 
         Route::get('/{uuid}/info', [CompanyController::class, 'info']);
+        Route::get('/{uuid}/categories', [CompanyController::class, 'categories']);
 
         Route::get('/categories/{category}', [\App\Http\Controllers\Api\CategoryController::class, 'getCompanyByCategory']);
     });

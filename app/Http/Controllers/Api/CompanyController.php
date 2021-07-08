@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\PaginateFormatter;
 use App\Http\Controllers\Controller;
 use App\Mail\ClaimMail;
+use App\Models\Category;
 use App\Models\ClaimToken;
 use App\Models\Company;
+use App\Models\CompanyCategory;
 use App\Models\Review;
 use App\Rules\ValidDomain;
 use Carbon\Carbon;
@@ -44,7 +46,7 @@ class CompanyController extends Controller
         $company = Company::where("domain", $domain)->first();
         if (empty($company)) abort(404);
 
-        $query = Review::with(['author:id,first_name,last_name','reply'])
+        $query = Review::with(['author:id,first_name,last_name', 'reply'])
             ->where('company_id', $company->id);
 
         $search = $request->get('search');
@@ -79,16 +81,14 @@ class CompanyController extends Controller
         );
         $validate = Validator::make($request->all(), $rules);
         if ($validate->fails()) return response()->json([], 400);
-
         $domain = $request->get('domain');
         $email = $request->get('email');
         $domain = preg_replace("~^www\.~", "", $domain);
-        $company = Company::where("domain", $domain)
-            ->first();
+        $company = Company::where("domain", $domain)->first();
+        $mail = $email . '@' . $domain;
         if ($company && $company->claimed_at) return response()->json([], 402);
         DB::beginTransaction();
         try {
-            $mail = $email . '@' . $domain;
             $user = $request->user();
             $token = \Hash::make($user->id);
             $claimToken = new ClaimToken();
@@ -98,19 +98,18 @@ class CompanyController extends Controller
             $claimToken->expired_at = Carbon::now()->addWeeks(1);
             $claimToken->token = $token;
             $claimToken->save();
-            $mailData = [
-                'name' => $user->first_name,
-                'domain' => $domain,
-                'token' => $token,
-            ];
-
-            Mail::to($mail)->send(new ClaimMail($mailData));
             DB::commit();
-            return response()->json($company, 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([], 500);
         }
+        $mailData = [
+            'name' => $user->first_name,
+            'domain' => $domain,
+            'token' => $token,
+        ];
+        Mail::to($mail)->send(new ClaimMail($mailData));
+        return response()->json($company, 200);
     }
 
     /**
@@ -174,5 +173,13 @@ class CompanyController extends Controller
             'reviews_count' => $reviews_count,
             'stars' => $stars
         ]);
+    }
+
+    public function categories(Request $request, $uuid)
+    {
+        $company = Company::where('uuid', $uuid)->first();
+        if (empty($company)) abort(404);
+        $categories = CompanyCategory::with(['category'])->where('company_id', $company->id)->get()->all();
+        return response()->json($categories);
     }
 }

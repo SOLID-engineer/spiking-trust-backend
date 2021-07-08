@@ -22,7 +22,18 @@ use Illuminate\Database\Eloquent\Model;
 class CompanyCategory extends Model
 {
     use HasFactory;
+
     protected $table = 'company_category';
 
     public $timestamps = false;
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class,  'category_id');
+    }
 }

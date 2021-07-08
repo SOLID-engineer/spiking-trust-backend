@@ -47,7 +47,7 @@ class SendMailInvitation implements ShouldQueue
             ['company_id', $invitation->company_id],
             ['id', '!=', $invitation->id],
             ['status', Invitation::STATUS_DELIVERED],
-        ])->first();
+        ])->count();
 
         if ($exist) {
             $invitation->status = Invitation::STATUS_NOT_DELIVERED;

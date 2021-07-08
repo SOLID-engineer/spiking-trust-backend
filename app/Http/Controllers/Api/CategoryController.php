@@ -9,31 +9,45 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return Response
-     */
+//    /**
+//     * @param Request $request
+//     * @return Response
+//     */
+//    public function index(Request $request)
+//    {
+//        $categories = Category::where([['status', 1], ['level', "<=", 2]])
+//            ->get();
+//        $_categories = [];
+//        foreach ($categories as $category) {
+//            if ($category['parent_id'] === 0) {
+//                $category['children'] = [];
+//                foreach ($categories as $children) {
+//                    if ($category['id'] === $children['parent_id']) {
+//                        $category['children'] = array_merge($category['children'], [$children]);
+//                    }
+//                }
+//                $_categories[] = $category;
+//            }
+//        }
+//        return response($_categories, 200);
+//    }
 
     public function index(Request $request)
     {
-        $categories = Category::where([['status', 1], ['level', "<=", 2]])
-            ->get();
-        $_categories = [];
-        foreach ($categories as $category) {
-            if ($category['parent_id'] === 0) {
-                $category['children'] = [];
-                foreach ($categories as $children) {
-                    if ($category['id'] === $children['parent_id']) {
-                        $category['children'] = array_merge($category['children'], [$children]);
-                    }
-                }
-                $_categories[] = $category;
-            }
-        }
-        return response($_categories, 200);
+        $categories = DB::table('categories')
+            ->select([
+                'id',
+                'parent_id',
+                'name',
+                'slug',
+                'depth',
+                'level'
+            ])->get();
+        return response()->json($categories, 200);
     }
 
     public function category($slug, Request $request)
@@ -82,4 +96,6 @@ class CategoryController extends Controller
 
         return response($companies, 200);
     }
+
+
 }
