@@ -30,10 +30,12 @@ class CategoryController extends Controller
             $categoryModel->where('id', '!=', $category_id);
             $categoryModel->where('parent_id', '!=', $category_id);
         }
+        if ($level != 3) {
+            $categoryModel->with('children')
+                ->with('parent');
+        }
 
-        $categories = $categoryModel->with('children')
-            ->with('parent')
-            ->orderBy('depth', 'asc')->get();
+        $categories = $categoryModel ->orderBy('depth', 'asc')->get();
         return response()->json($categories);
     }
 

@@ -55,7 +55,7 @@ class CategoryController extends Controller
             return response()->json([], 400);
         }
         $company = Company::with('categories')->find($request->company->id);
-        if (!empty($company['categories']) && count($company['categories']) > 5) {
+        if (!empty($company['categories']) && count($company['categories']) > 6) {
             return response()->json([], 400);
         }
         DB::beginTransaction();
@@ -131,7 +131,6 @@ class CategoryController extends Controller
             ]);;
             DB::commit();
         } catch (\Exception $exception) {
-            dd($exception);
             DB::rollBack();
             return response()->json([], 500);
         }
